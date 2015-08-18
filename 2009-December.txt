@@ -1,0 +1,602 @@
+From klaas.gadeyne at fmtc.be  Fri Dec 18 10:25:44 2009
+From: klaas.gadeyne at fmtc.be (Klaas Gadeyne)
+Date: Fri, 18 Dec 2009 10:25:44 +0100
+Subject: [Ethercatmaster-devel] [Bug 6] Compile warning about non virtual
+	destructor
+In-Reply-To: <bug-6-3@https.www.fmtc.be/bugzilla/eml/>
+References: <bug-6-3@https.www.fmtc.be/bugzilla/eml/>
+Message-ID: <E1NLZ5k-0007Xh-UY@www.fmtc.be>
+
+https://www.fmtc.be/bugzilla/eml/show_bug.cgi?id=6
+
+
+
+
+
+--- Comment #1 from Klaas Gadeyne <klaas.gadeyne at fmtc.be>  2009-12-18 10:25:45 ---
+Should check why this has been implemented as a struct instead of a pure
+virtual class (it's a C++ interface after all).
+
+Probably has something to do with the limited availability of C++ primitives
+for eCos.
+Warning seems also harmless since the struct contains only functions IIRC. 
+Before fixing, we need to check wether this will lead to regressions for eCos
+
+-- 
+Configure bugmail: https://www.fmtc.be/bugzilla/eml/userprefs.cgi?tab=email
+------- You are receiving this mail because: -------
+You are the assignee for the bug.
+
+
+From klaas.gadeyne at fmtc.be  Fri Dec 18 10:30:18 2009
+From: klaas.gadeyne at fmtc.be (Klaas Gadeyne)
+Date: Fri, 18 Dec 2009 10:30:18 +0100
+Subject: [Ethercatmaster-devel] [Bug 7] New: Ethercat Master Library
+ (native) is not linked against -lrtdm
+Message-ID: <bug-7-3@https.www.fmtc.be/bugzilla/eml/>
+
+https://www.fmtc.be/bugzilla/eml/show_bug.cgi?id=7
+
+           Summary: Ethercat Master Library (native) is not linked against
+                    -lrtdm
+           Product: EML
+           Version: unspecified
+          Platform: PC
+        OS/Version: Xenomai/RTnet
+            Status: NEW
+          Severity: major
+          Priority: P5
+         Component: RTOS wrapper
+        AssignedTo: ethercatmaster-devel at lists.berlios.de
+        ReportedBy: klaas.gadeyne at fmtc.be
+   Estimated Hours: 0.0
+
+
+Title says it all...
+
+Temporary workaround:  Add manually to your link flags when linking with libeml
+
+-- 
+Configure bugmail: https://www.fmtc.be/bugzilla/eml/userprefs.cgi?tab=email
+------- You are receiving this mail because: -------
+You are the assignee for the bug.
+
+
+From klaas.gadeyne at fmtc.be  Fri Dec 18 10:32:59 2009
+From: klaas.gadeyne at fmtc.be (Klaas Gadeyne)
+Date: Fri, 18 Dec 2009 10:32:59 +0100
+Subject: [Ethercatmaster-devel] [Bug 8] New: [feature] Port to xenomai
+	native.
+Message-ID: <bug-8-3@https.www.fmtc.be/bugzilla/eml/>
+
+https://www.fmtc.be/bugzilla/eml/show_bug.cgi?id=8
+
+           Summary: [feature] Port to xenomai native.
+           Product: EML
+           Version: trunk
+          Platform: PC
+        OS/Version: Xenomai/RTnet
+            Status: NEW
+          Severity: enhancement
+          Priority: P5
+         Component: RTOS wrapper
+        AssignedTo: ethercatmaster-devel at lists.berlios.de
+        ReportedBy: klaas.gadeyne at fmtc.be
+   Estimated Hours: 0.0
+
+
+Currently,
+
+EML is using RTDM and xenomai's posix skin.  This means that it cannot be used
+in other projects that are using other skins.  E.g. orocos applications on
+xenomai are linked against native.
+
+A "native" port of the xenomai port of EML could fix this.
+
+-- 
+Configure bugmail: https://www.fmtc.be/bugzilla/eml/userprefs.cgi?tab=email
+------- You are receiving this mail because: -------
+You are the assignee for the bug.
+
+
+From klaas.gadeyne at fmtc.be  Fri Dec 18 10:35:07 2009
+From: klaas.gadeyne at fmtc.be (Klaas Gadeyne)
+Date: Fri, 18 Dec 2009 10:35:07 +0100
+Subject: [Ethercatmaster-devel] [Bug 8] [feature] Port to xenomai native.
+In-Reply-To: <bug-8-3@https.www.fmtc.be/bugzilla/eml/>
+References: <bug-8-3@https.www.fmtc.be/bugzilla/eml/>
+Message-ID: <E1NLZEp-0007Z7-P0@www.fmtc.be>
+
+https://www.fmtc.be/bugzilla/eml/show_bug.cgi?id=8
+
+
+Klaas Gadeyne <klaas.gadeyne at fmtc.be> changed:
+
+           What    |Removed                     |Added
+----------------------------------------------------------------------------
+             Status|NEW                         |ASSIGNED
+
+
+
+
+--- Comment #1 from Klaas Gadeyne <klaas.gadeyne at fmtc.be>  2009-12-18 10:35:07 ---
+Started preliminary version in branch:
+
+See
+<https://www.fmtc.be/websvn/wsvn/ethercatmaster/branches/xeno-native/?rev=0&sc=0>
+
+Seems to work fine at first sight but
+- Should be tested further
+- Choosing which skin should become an option in the build system so this can
+be merged with trunk
+
+-- 
+Configure bugmail: https://www.fmtc.be/bugzilla/eml/userprefs.cgi?tab=email
+------- You are receiving this mail because: -------
+You are the assignee for the bug.
+
+
+From klaas.gadeyne at fmtc.be  Fri Dec 18 10:23:29 2009
+From: klaas.gadeyne at fmtc.be (Klaas Gadeyne)
+Date: Fri, 18 Dec 2009 10:23:29 +0100
+Subject: [Ethercatmaster-devel] [Bug 6] New: Compile warning about non
+	virtual destructor
+Message-ID: <bug-6-3@https.www.fmtc.be/bugzilla/eml/>
+
+https://www.fmtc.be/bugzilla/eml/show_bug.cgi?id=6
+
+           Summary: Compile warning about non virtual destructor
+           Product: EML
+           Version: unspecified
+          Platform: PC
+        OS/Version: All
+            Status: NEW
+          Severity: enhancement
+          Priority: P5
+         Component: DLL
+        AssignedTo: ethercatmaster-devel at lists.berlios.de
+        ReportedBy: klaas.gadeyne at fmtc.be
+   Estimated Hours: 0.0
+
+
+warning: ?struct
+EtherCAT_Frame? has virtual functions and accessible non-virtual destructor
+
+-- 
+Configure bugmail: https://www.fmtc.be/bugzilla/eml/userprefs.cgi?tab=email
+------- You are receiving this mail because: -------
+You are the assignee for the bug.
+
+From klaas.gadeyne at fmtc.be  Fri Dec 18 10:19:27 2009
+From: klaas.gadeyne at fmtc.be (Klaas Gadeyne)
+Date: Fri, 18 Dec 2009 10:19:27 +0100
+Subject: [Ethercatmaster-devel] [Bug 5] New: EthercatMaster pkg-config file
+	is incomplete
+Message-ID: <bug-5-3@https.www.fmtc.be/bugzilla/eml/>
+
+https://www.fmtc.be/bugzilla/eml/show_bug.cgi?id=5
+
+           Summary: EthercatMaster pkg-config file is incomplete
+           Product: EML
+           Version: unspecified
+          Platform: PC
+        OS/Version: Linux
+            Status: NEW
+          Severity: normal
+          Priority: P5
+         Component: Other
+        AssignedTo: ethercatmaster-devel at lists.berlios.de
+        ReportedBy: klaas.gadeyne at fmtc.be
+   Estimated Hours: 0.0
+
+
+The pkg-config configuration in
+/usr/local/eml-xenomai-native/lib/pkgconfig/eml-xenomai.pc is incomplete.  It
+should at least contain a -L option to locate the eml library.
+
+-- 
+Configure bugmail: https://www.fmtc.be/bugzilla/eml/userprefs.cgi?tab=email
+------- You are receiving this mail because: -------
+You are the assignee for the bug.
+
+
+From klaas.gadeyne at fmtc.be  Fri Dec 18 10:51:46 2009
+From: klaas.gadeyne at fmtc.be (Klaas Gadeyne)
+Date: Fri, 18 Dec 2009 10:51:46 +0100
+Subject: [Ethercatmaster-devel] [Bug 8] [feature] Port to xenomai native.
+In-Reply-To: <bug-8-3@https.www.fmtc.be/bugzilla/eml/>
+References: <bug-8-3@https.www.fmtc.be/bugzilla/eml/>
+Message-ID: <E1NLZUw-0007eJ-Ji@www.fmtc.be>
+
+https://www.fmtc.be/bugzilla/eml/show_bug.cgi?id=8
+
+
+Klaas Gadeyne <klaas.gadeyne at fmtc.be> changed:
+
+           What    |Removed                     |Added
+----------------------------------------------------------------------------
+         Depends on|                            |7
+
+
+
+
+-- 
+Configure bugmail: https://www.fmtc.be/bugzilla/eml/userprefs.cgi?tab=email
+------- You are receiving this mail because: -------
+You are the assignee for the bug.
+
+
+From klaas.gadeyne at fmtc.be  Fri Dec 18 10:51:46 2009
+From: klaas.gadeyne at fmtc.be (Klaas Gadeyne)
+Date: Fri, 18 Dec 2009 10:51:46 +0100
+Subject: [Ethercatmaster-devel] [Bug 7] Ethercat Master Library (native) is
+ not linked against -lrtdm
+In-Reply-To: <bug-7-3@https.www.fmtc.be/bugzilla/eml/>
+References: <bug-7-3@https.www.fmtc.be/bugzilla/eml/>
+Message-ID: <E1NLZUw-0007eH-H5@www.fmtc.be>
+
+https://www.fmtc.be/bugzilla/eml/show_bug.cgi?id=7
+
+
+Klaas Gadeyne <klaas.gadeyne at fmtc.be> changed:
+
+           What    |Removed                     |Added
+----------------------------------------------------------------------------
+             Blocks|                            |8
+
+
+
+
+-- 
+Configure bugmail: https://www.fmtc.be/bugzilla/eml/userprefs.cgi?tab=email
+------- You are receiving this mail because: -------
+You are the assignee for the bug.
+
+
+From klaas.gadeyne at fmtc.be  Fri Dec 18 10:52:43 2009
+From: klaas.gadeyne at fmtc.be (Klaas Gadeyne)
+Date: Fri, 18 Dec 2009 10:52:43 +0100
+Subject: [Ethercatmaster-devel] [Bug 5] EthercatMaster pkg-config file is
+	incomplete
+In-Reply-To: <bug-5-3@https.www.fmtc.be/bugzilla/eml/>
+References: <bug-5-3@https.www.fmtc.be/bugzilla/eml/>
+Message-ID: <E1NLZVr-0007er-FC@www.fmtc.be>
+
+https://www.fmtc.be/bugzilla/eml/show_bug.cgi?id=5
+
+
+Klaas Gadeyne <klaas.gadeyne at fmtc.be> changed:
+
+           What    |Removed                     |Added
+----------------------------------------------------------------------------
+             Blocks|                            |7
+
+
+
+
+-- 
+Configure bugmail: https://www.fmtc.be/bugzilla/eml/userprefs.cgi?tab=email
+------- You are receiving this mail because: -------
+You are the assignee for the bug.
+
+
+From klaas.gadeyne at fmtc.be  Fri Dec 18 10:52:43 2009
+From: klaas.gadeyne at fmtc.be (Klaas Gadeyne)
+Date: Fri, 18 Dec 2009 10:52:43 +0100
+Subject: [Ethercatmaster-devel] [Bug 7] Ethercat Master Library (native) is
+ not linked against -lrtdm
+In-Reply-To: <bug-7-3@https.www.fmtc.be/bugzilla/eml/>
+References: <bug-7-3@https.www.fmtc.be/bugzilla/eml/>
+Message-ID: <E1NLZVr-0007eu-HO@www.fmtc.be>
+
+https://www.fmtc.be/bugzilla/eml/show_bug.cgi?id=7
+
+
+Klaas Gadeyne <klaas.gadeyne at fmtc.be> changed:
+
+           What    |Removed                     |Added
+----------------------------------------------------------------------------
+         Depends on|                            |5
+
+
+
+
+-- 
+Configure bugmail: https://www.fmtc.be/bugzilla/eml/userprefs.cgi?tab=email
+------- You are receiving this mail because: -------
+You are the assignee for the bug.
+
+
+From klaas.gadeyne at fmtc.be  Fri Dec 18 10:53:15 2009
+From: klaas.gadeyne at fmtc.be (Klaas Gadeyne)
+Date: Fri, 18 Dec 2009 10:53:15 +0100
+Subject: [Ethercatmaster-devel] [Bug 5] EthercatMaster pkg-config file is
+	incomplete
+In-Reply-To: <bug-5-3@https.www.fmtc.be/bugzilla/eml/>
+References: <bug-5-3@https.www.fmtc.be/bugzilla/eml/>
+Message-ID: <E1NLZWN-0007fJ-MI@www.fmtc.be>
+
+https://www.fmtc.be/bugzilla/eml/show_bug.cgi?id=5
+
+
+Klaas Gadeyne <klaas.gadeyne at fmtc.be> changed:
+
+           What    |Removed                     |Added
+----------------------------------------------------------------------------
+             Blocks|7                           |8
+
+
+
+
+-- 
+Configure bugmail: https://www.fmtc.be/bugzilla/eml/userprefs.cgi?tab=email
+------- You are receiving this mail because: -------
+You are the assignee for the bug.
+
+
+From klaas.gadeyne at fmtc.be  Fri Dec 18 10:53:15 2009
+From: klaas.gadeyne at fmtc.be (Klaas Gadeyne)
+Date: Fri, 18 Dec 2009 10:53:15 +0100
+Subject: [Ethercatmaster-devel] [Bug 7] Ethercat Master Library (native) is
+ not linked against -lrtdm
+In-Reply-To: <bug-7-3@https.www.fmtc.be/bugzilla/eml/>
+References: <bug-7-3@https.www.fmtc.be/bugzilla/eml/>
+Message-ID: <E1NLZWN-0007fL-PL@www.fmtc.be>
+
+https://www.fmtc.be/bugzilla/eml/show_bug.cgi?id=7
+
+
+Klaas Gadeyne <klaas.gadeyne at fmtc.be> changed:
+
+           What    |Removed                     |Added
+----------------------------------------------------------------------------
+         Depends on|5                           |
+
+
+
+
+-- 
+Configure bugmail: https://www.fmtc.be/bugzilla/eml/userprefs.cgi?tab=email
+------- You are receiving this mail because: -------
+You are the assignee for the bug.
+
+
+From klaas.gadeyne at fmtc.be  Fri Dec 18 10:53:15 2009
+From: klaas.gadeyne at fmtc.be (Klaas Gadeyne)
+Date: Fri, 18 Dec 2009 10:53:15 +0100
+Subject: [Ethercatmaster-devel] [Bug 8] [feature] Port to xenomai native.
+In-Reply-To: <bug-8-3@https.www.fmtc.be/bugzilla/eml/>
+References: <bug-8-3@https.www.fmtc.be/bugzilla/eml/>
+Message-ID: <E1NLZWN-0007fP-RK@www.fmtc.be>
+
+https://www.fmtc.be/bugzilla/eml/show_bug.cgi?id=8
+
+
+Klaas Gadeyne <klaas.gadeyne at fmtc.be> changed:
+
+           What    |Removed                     |Added
+----------------------------------------------------------------------------
+         Depends on|                            |5
+
+
+
+
+-- 
+Configure bugmail: https://www.fmtc.be/bugzilla/eml/userprefs.cgi?tab=email
+------- You are receiving this mail because: -------
+You are the assignee for the bug.
+
+
+From johan.cockx at fmtc.be  Fri Dec 18 12:02:45 2009
+From: johan.cockx at fmtc.be (jcoc)
+Date: Fri, 18 Dec 2009 12:02:45 +0100
+Subject: [Ethercatmaster-devel] [Bug 9] no supported/documented way to
+ control where output messages go
+In-Reply-To: <bug-9-3@https.www.fmtc.be/bugzilla/eml/>
+References: <bug-9-3@https.www.fmtc.be/bugzilla/eml/>
+Message-ID: <E1NLabd-0007pH-A2@www.fmtc.be>
+
+https://www.fmtc.be/bugzilla/eml/show_bug.cgi?id=9
+
+
+jcoc <johan.cockx at fmtc.be> changed:
+
+           What    |Removed                     |Added
+----------------------------------------------------------------------------
+           Priority|P4                          |P3
+
+
+
+
+--- Comment #1 from jcoc <johan.cockx at fmtc.be>  2009-12-18 12:02:45 ---
+Proposed work-around doesn't work:  there is no way to change how messages are
+handled from an application.
+
+For this reason,  the priority has been raised.
+
+Note: the xenomai native version of eml currently uses printf (to std out) for
+all messages regardless of level;  this is in general undesirable.
+
+-- 
+Configure bugmail: https://www.fmtc.be/bugzilla/eml/userprefs.cgi?tab=email
+------- You are receiving this mail because: -------
+You are the assignee for the bug.
+
+
+From johan.cockx at fmtc.be  Fri Dec 18 11:57:42 2009
+From: johan.cockx at fmtc.be (jcoc)
+Date: Fri, 18 Dec 2009 11:57:42 +0100
+Subject: [Ethercatmaster-devel] [Bug 9] New: no supported/documented way to
+ control where output messages go
+Message-ID: <bug-9-3@https.www.fmtc.be/bugzilla/eml/>
+
+https://www.fmtc.be/bugzilla/eml/show_bug.cgi?id=9
+
+           Summary: no supported/documented way to control where output
+                    messages go
+           Product: EML
+           Version: unspecified
+          Platform: All
+        OS/Version: All
+            Status: NEW
+          Severity: enhancement
+          Priority: P4
+         Component: DLL
+        AssignedTo: ethercatmaster-devel at lists.berlios.de
+        ReportedBy: johan.cockx at fmtc.be
+   Estimated Hours: 0.0
+
+
+Messages are generated by eml (or by a specific part of eml?) using the ec_log
+macro,  which accepts a log level and printf-style arguments.  How ec_log is
+implemented depends on the platform.
+
+There is no supported or documented way for an application to control which
+messages are printed or where they go (std out, std err, log file ...).
+
+Work around:  redefine the ec_log macro after including the eml headers.
+
+-- 
+Configure bugmail: https://www.fmtc.be/bugzilla/eml/userprefs.cgi?tab=email
+------- You are receiving this mail because: -------
+You are the assignee for the bug.
+
+
+From klaas.gadeyne at fmtc.be  Fri Dec 18 15:27:01 2009
+From: klaas.gadeyne at fmtc.be (Klaas Gadeyne)
+Date: Fri, 18 Dec 2009 15:27:01 +0100
+Subject: [Ethercatmaster-devel] [Bug 5] EthercatMaster pkg-config file is
+	incomplete
+In-Reply-To: <bug-5-3@https.www.fmtc.be/bugzilla/eml/>
+References: <bug-5-3@https.www.fmtc.be/bugzilla/eml/>
+Message-ID: <E1NLdnJ-0008NY-LB@www.fmtc.be>
+
+https://www.fmtc.be/bugzilla/eml/show_bug.cgi?id=5
+
+
+Klaas Gadeyne <klaas.gadeyne at fmtc.be> changed:
+
+           What    |Removed                     |Added
+----------------------------------------------------------------------------
+             Status|NEW                         |ASSIGNED
+
+
+
+
+--- Comment #1 from Klaas Gadeyne <klaas.gadeyne at fmtc.be>  2009-12-18 15:27:01 ---
+Solved for xenomai native and plain gnulinux in r62 by Steven Kauffmann
+
+Should be solved for xenomai posix skin too before merge.
+
+-- 
+Configure bugmail: https://www.fmtc.be/bugzilla/eml/userprefs.cgi?tab=email
+------- You are receiving this mail because: -------
+You are the assignee for the bug.
+
+
+From johan.cockx at fmtc.be  Fri Dec 18 16:07:58 2009
+From: johan.cockx at fmtc.be (jcoc)
+Date: Fri, 18 Dec 2009 16:07:58 +0100
+Subject: [Ethercatmaster-devel] [Bug 10] New: Non-matching slave config:
+	errors detected and logged, 
+Message-ID: <bug-10-3@https.www.fmtc.be/bugzilla/eml/>
+
+https://www.fmtc.be/bugzilla/eml/show_bug.cgi?id=10
+
+           Summary: Non-matching slave config: errors detected and logged,
+           Product: EML
+           Version: unspecified
+          Platform: PC
+        OS/Version: Xenomai/RTnet
+            Status: NEW
+          Severity: normal
+          Priority: P3
+         Component: AL
+        AssignedTo: ethercatmaster-devel at lists.berlios.de
+        ReportedBy: johan.cockx at fmtc.be
+   Estimated Hours: 0.0
+
+
+My configuration in the code has two slaves,  but in reality,  there are three.
+
+In this case,  the call to EtherCAT_Master::instance() reports errors on std
+out,  but fails to return an indication of the failure to the application.  
+
+As a result,  the application simply continues but does not work properly.
+
+Is there a way to check for failure?  The eml documentation is somewhat limited
+at this moment (just header files),    where to look?
+
+The error messages on std out are:
+
+EtherCAT AL: Ring contains 3 slaves
+EEPROM busy
+EEPROM busy
+AL creating SlaveHandler: pos=0, adr=0x3e9, Prod. Code=0x44c2c52, rev=0x110000
+EEPROM busy
+EEPROM busy
+AL creating SlaveHandler: pos=1, adr=0x3ea, Prod. Code=0x84c3052, rev=0x100000
+EEPROM busy
+EEPROM busy
+EtherCAT_SlaveDb: No such Config, returning NULL!
+EC_AL Warning: No such slave in db, creating dummy slave
+AL creating SlaveHandler: pos=2, Product Code=0x7d83052, rev=0x100000
+AL: resetting FMMUs
+AL: resetting SMs
+AL: Setting all slaves in init mode
+
+-- 
+Configure bugmail: https://www.fmtc.be/bugzilla/eml/userprefs.cgi?tab=email
+------- You are receiving this mail because: -------
+You are the assignee for the bug.
+
+
+From klaas.gadeyne at fmtc.be  Mon Dec 21 16:22:32 2009
+From: klaas.gadeyne at fmtc.be (Klaas Gadeyne)
+Date: Mon, 21 Dec 2009 16:22:32 +0100
+Subject: [Ethercatmaster-devel] [Bug 10] Non-matching slave config: errors
+	detected and logged, 
+In-Reply-To: <bug-10-3@https.www.fmtc.be/bugzilla/eml/>
+References: <bug-10-3@https.www.fmtc.be/bugzilla/eml/>
+Message-ID: <E1NMk5g-0004m7-FA@www.fmtc.be>
+
+https://www.fmtc.be/bugzilla/eml/show_bug.cgi?id=10
+
+
+Klaas Gadeyne <klaas.gadeyne at fmtc.be> changed:
+
+           What    |Removed                     |Added
+----------------------------------------------------------------------------
+             Status|NEW                         |RESOLVED
+         Resolution|                            |INVALID
+                 CC|                            |klaas.gadeyne at fmtc.be
+
+
+
+
+--- Comment #1 from Klaas Gadeyne <klaas.gadeyne at fmtc.be>  2009-12-21 16:22:32 ---
+As reported by the "error" messages, this should merely be a warning and the
+application should work fine.  Therefor I consider this is not a bug.
+
+-- 
+Configure bugmail: https://www.fmtc.be/bugzilla/eml/userprefs.cgi?tab=email
+------- You are receiving this mail because: -------
+You are the assignee for the bug.
+
+
+From juergen.lanner at besi.com  Tue Dec 22 12:19:30 2009
+From: juergen.lanner at besi.com (juergen.lanner at besi.com)
+Date: Tue, 22 Dec 2009 12:19:30 +0100
+Subject: [Ethercatmaster-devel] Juergen Lanner is out of the office.
+Message-ID: <OFC2FC2362.0BC5EE76-ONC1257694.003E361A-C1257694.003E361A@datacon.at>
+
+
+I will be out of the office starting  22.12.2009 and will not return until
+07.01.2010.
+
+I will respond to your message when I return. In urgent cases please
+contact Mr Walter Schneider (walter.schneider at besi.com).
+-------------- next part --------------
+An HTML attachment was scrubbed...
+URL: <https://lists.berlios.de/pipermail/ethercatmaster-devel/attachments/20091222/cc297a41/attachment.html>
+

@@ -1,0 +1,96 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Ethercatmaster-devel] [PATCH] Cleanup RTnet port
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/ethercatmaster-devel/2007-February/index.html" >
+   <LINK REL="made" HREF="mailto:ethercatmaster-devel%40lists.berlios.de?Subject=Re%3A%20%5BEthercatmaster-devel%5D%20%5BPATCH%5D%20Cleanup%20RTnet%20port&In-Reply-To=%3CPine.LNX.4.64.0702221638020.10576%40ampere.labo01.fmtc.be%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000013.html">
+   <LINK REL="Next"  HREF="000017.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Ethercatmaster-devel] [PATCH] Cleanup RTnet port</H1>
+    <B>Klaas Gadeyne</B> 
+    <A HREF="mailto:ethercatmaster-devel%40lists.berlios.de?Subject=Re%3A%20%5BEthercatmaster-devel%5D%20%5BPATCH%5D%20Cleanup%20RTnet%20port&In-Reply-To=%3CPine.LNX.4.64.0702221638020.10576%40ampere.labo01.fmtc.be%3E"
+       TITLE="[Ethercatmaster-devel] [PATCH] Cleanup RTnet port">klaas.gadeyne at fmtc.be
+       </A><BR>
+    <I>Thu Feb 22 16:42:29 CET 2007</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000013.html">[Ethercatmaster-devel] [PATCH] Cleanup RTnet port
+</A></li>
+        <LI>Next message: <A HREF="000017.html">[Ethercatmaster-devel] Build error with cmake v2.2
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#14">[ date ]</a>
+              <a href="thread.html#14">[ thread ]</a>
+              <a href="subject.html#14">[ subject ]</a>
+              <a href="author.html#14">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>[...]
+&gt;<i> Here we go with a revised version of my cleanup stuff, now even cleaner. Note that
+</I>&gt;<i> the tests no longer need the posix flags, but only their own dependencies. That
+</I>&gt;<i> should even work for the static build, I think (but didn't test).
+</I>
+I'll let comment Tom on the posix part.
+
+The static build seems to go fine!  (That is, apart from an undefined
+reference:
+/root/install/xenomai-trunk-2.4.33-ipipe-1.2-08/lib/libpthread_rt.so.0:
+undefined reference to `__real_pthread_getschedparam'), but that
+should be fixed in recent xenomai installations
+
+I'm also looking into a strange
+&quot;does-work-on-the-CL-but-not-during-make&quot; error...
+
+<A HREF="https://lists.berlios.de/mailman/listinfo/ethercatmaster-devel">root at einstein</A>:~/SVN/sandbox/eml-trunk/build-gcc3.4 # make
+[snip]
+cd /root/SVN/sandbox/eml-trunk/build-gcc3.4/src &amp;&amp; /usr/bin/cmake -E cmake_link_script CMakeFiles/eml-dynamic.dir/link.txt --verbose=1
+/usr/bin/g++-3.4  -fPIC   `/root/install/xenomai-trunk-2.4.33-ipipe-1.2-08//bin/xeno-config --posix-ldflags` -shared -Wl,-soname,libeml.so -o libeml.so &quot;CMakeFiles/eml-dynamic.dir/al/ethercat_process_data.o&quot; &quot;CMakeFiles/eml-dynamic.dir/al/ethercat_slave_handler.o&quot; &quot;CMakeFiles/eml-dynamic.dir/al/ethercat_AL.o&quot; &quot;CMakeFiles/eml-dynamic.dir/al/ethercat_router.o&quot; &quot;CMakeFiles/eml-dynamic.dir/al/ethercat_slave_conf.o&quot; &quot;CMakeFiles/eml-dynamic.dir/al/ethercat_mbx.o&quot; &quot;CMakeFiles/eml-dynamic.dir/al/ethercat_FSM.o&quot; &quot;CMakeFiles/eml-dynamic.dir/al/ethercat_master.o&quot; &quot;CMakeFiles/eml-dynamic.dir/dll/ethercat_slave_memory.o&quot; &quot;CMakeFiles/eml-dynamic.dir/dll/ethercat_telegram.o&quot; &quot;CMakeFiles/eml-dynamic.dir/dll/ethercat_dll.o&quot; &quot;CMakeFiles/eml-dynamic.dir/dll/ethercat_device_addressed_telegram.o&quot; &quot;CMakeFiles/eml-dynamic.dir/dll/ethercat_frame.o&quot; &quot;CMakeFiles/eml-dynamic.dir/dll/ethercat_logical_addressed_telegram.o&quot; &quot;CMakeFiles/eml-dynamic.dir/arch/RTnet/ethercat_xenomai_drv.o&quot; -L/root/install/xenomai-trunk-2.4.33-ipipe-1.2-08/lib
+g++-3.4: `/root/install/xenomai-trunk-2.4.33-ipipe-1.2-08//bin/xeno-config: No such file or directory
+make[2]: *** [src/libeml.so] Error 1
+make[2]: Leaving directory `/root/SVN/sandbox/eml-trunk/build-gcc3.4'
+make[1]: *** [src/CMakeFiles/eml-dynamic.dir/all] Error 2
+make[1]: Leaving directory `/root/SVN/sandbox/eml-trunk/build-gcc3.4'
+make: *** [all] Error 2
+<A HREF="https://lists.berlios.de/mailman/listinfo/ethercatmaster-devel">root at einstein</A>:~/SVN/sandbox/eml-trunk/build-gcc3.4 #
+   cd src/
+<A HREF="https://lists.berlios.de/mailman/listinfo/ethercatmaster-devel">root at einstein</A>:~/SVN/sandbox/eml-trunk/build-gcc3.4/src #
+   /usr/bin/g++-3.4  -fPIC   `/root/install/xenomai-trunk-2.4.33-ipipe-1.2-08//bin/xeno-config --posix-ldflags` -shared -Wl,-soname,libeml.so -o libeml.so &quot;CMakeFiles/eml-dynamic.dir/al/ethercat_process_data.o&quot; &quot;CMakeFiles/eml-dynamic.dir/al/ethercat_slave_handler.o&quot; &quot;CMakeFiles/eml-dynamic.dir/al/ethercat_AL.o&quot; &quot;CMakeFiles/eml-dynamic.dir/al/ethercat_router.o&quot; &quot;CMakeFiles/eml-dynamic.dir/al/ethercat_slave_conf.o&quot; &quot;CMakeFiles/eml-dynamic.dir/al/ethercat_mbx.o&quot; &quot;CMakeFiles/eml-dynamic.dir/al/ethercat_FSM.o&quot; &quot;CMakeFiles/eml-dynamic.dir/al/ethercat_master.o&quot; &quot;CMakeFiles/eml-dynamic.dir/dll/ethercat_slave_memory.o&quot; &quot;CMakeFiles/eml-dynamic.dir/dll/ethercat_telegram.o&quot; &quot;CMakeFiles/eml-dynamic.dir/dll/ethercat_dll.o&quot; &quot;CMakeFiles/eml-dynamic.dir/dll/ethercat_device_addressed_telegram.o&quot; &quot;CMakeFiles/eml-dynamic.dir/dll/ethercat_frame.o&quot; &quot;CMakeFiles/eml-dynamic.dir/dll/ethercat_logical_addressed_telegram.o&quot; &quot;CMakeFiles/eml-dynamic.dir/arch/RTnet/ethercat_xenomai_drv.o&quot; -L/root/install/xenomai-trunk-2.4.33-ipipe-1.2-08/lib
+
+The copy-pasted command works fine, not during make though...
+
+thx for the patch!
+
+Klaas
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000013.html">[Ethercatmaster-devel] [PATCH] Cleanup RTnet port
+</A></li>
+	<LI>Next message: <A HREF="000017.html">[Ethercatmaster-devel] Build error with cmake v2.2
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#14">[ date ]</a>
+              <a href="thread.html#14">[ thread ]</a>
+              <a href="subject.html#14">[ subject ]</a>
+              <a href="author.html#14">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/ethercatmaster-devel">More information about the Ethercatmaster-devel
+mailing list</a><br>
+</body></html>

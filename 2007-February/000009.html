@@ -1,0 +1,130 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Ethercatmaster-devel] [PATCH] Cleanup RTnet port
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/ethercatmaster-devel/2007-February/index.html" >
+   <LINK REL="made" HREF="mailto:ethercatmaster-devel%40lists.berlios.de?Subject=Re%3A%20%5BEthercatmaster-devel%5D%20%5BPATCH%5D%20Cleanup%20RTnet%20port&In-Reply-To=%3C45DD7207.4080308%40web.de%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000018.html">
+   <LINK REL="Next"  HREF="000011.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Ethercatmaster-devel] [PATCH] Cleanup RTnet port</H1>
+    <B>Jan Kiszka</B> 
+    <A HREF="mailto:ethercatmaster-devel%40lists.berlios.de?Subject=Re%3A%20%5BEthercatmaster-devel%5D%20%5BPATCH%5D%20Cleanup%20RTnet%20port&In-Reply-To=%3C45DD7207.4080308%40web.de%3E"
+       TITLE="[Ethercatmaster-devel] [PATCH] Cleanup RTnet port">jan.kiszka at web.de
+       </A><BR>
+    <I>Thu Feb 22 11:35:51 CET 2007</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000018.html">[Ethercatmaster-devel] [PATCH] Cleanup RTnet port
+</A></li>
+        <LI>Next message: <A HREF="000011.html">[Ethercatmaster-devel] [PATCH] Cleanup RTnet port
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#9">[ date ]</a>
+              <a href="thread.html#9">[ thread ]</a>
+              <a href="subject.html#9">[ subject ]</a>
+              <a href="author.html#9">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Klaas Gadeyne wrote:
+&gt;<i> On Thu, 22 Feb 2007, Jan Kiszka wrote:
+</I>&gt;<i> Hi Jan,
+</I>&gt;<i> 
+</I>&gt;&gt;<i> I just realised that you guys rolled out the RTnet port yesterday.
+</I>&gt;&gt;<i> Great! And here already comes the first patch. :)
+</I>&gt;<i> 
+</I>&gt;<i> How many hours are there in a day in Germany? :-) [*]
+</I>
+Still too few. Even worse, may feeling is time accelerates.
+
+&gt;<i> 
+</I>&gt;&gt;<i> It's just cleanup work of the build process and the libeml dependencies.
+</I>&gt;&gt;<i> I noticed that you are using POSIX synchronisation for the library but
+</I>&gt;&gt;<i> native RTDM for the RTnet interface. I switched the code completely to
+</I>&gt;&gt;<i> POSIX and (hopefully) cleaned up the build process a bit. /Seems/ to be
+</I>&gt;&gt;<i> as it should, ie. the right symbols are placed into the binaries, but you
+</I>&gt;&gt;<i> should surely check twice.
+</I>&gt;<i> 
+</I>&gt;<i> Thx for the patch!  IIRC Tom had some problems when using the posix
+</I>&gt;<i> API, that's why he switched to the native skin.  But he can surely explain
+</I>&gt;<i> that better than me. At the very least the &quot;using xeno-config&quot; part of
+</I>&gt;<i> your patch seems an improvement!
+</I>
+I'm all ears. Maybe it was just some missing piece for the linker that
+xeno-config now provides. If not, bug reports are &quot;welcome&quot;.
+
+&gt;<i> 
+</I>&gt;&gt;<i> Further suggestions: make libeml a dynamic library (and link that one
+</I>&gt;&gt;<i> already against pthread_rt).
+</I>&gt;<i> 
+</I>&gt;<i> I haven't looked into it yet, but that should be a default option when
+</I>&gt;<i> configuring a cmake build I think.
+</I>
+Not for me here:
+
+<A HREF="https://lists.berlios.de/mailman/listinfo/ethercatmaster-devel">kiszka at gcchost</A>:~/ethercat/build&gt; ls src/
+CMakeFiles  cmake_install.cmake  libeml.a  Makefile
+                                 ^^^^^^^^
+&gt;<i> 
+</I>&gt;&gt;<i> Unless there is still some critical checkin pending, please feel free to
+</I>&gt;&gt;<i> announce your work on rtnet-users and xenomai-help/core. I will put some
+</I>&gt;&gt;<i> link on the RTnet homepage then.
+</I>&gt;<i> 
+</I>&gt;<i> I haven't had time to review Tom's code myself :-) + I want to verify we
+</I>&gt;<i> haven't broken anything regarding the ecos port first + build some
+</I>&gt;<i> extra security into the build system.
+</I>
+OK, looking forward to you completing this step.
+
+&gt;<i> 
+</I>&gt;&gt;<i> Now I wish I had some hardware to try... :)
+</I>&gt;<i> 
+</I>&gt;<i> Answer to [*]: There must be at least 96 if you want to loose time on
+</I>&gt;<i> real hardware :-)
+</I>&gt;<i> 
+</I>&gt;<i> Thx,
+</I>&gt;<i> 
+</I>&gt;<i> Klaas
+</I>&gt;<i> 
+</I>
+Jan
+
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: signature.asc
+Type: application/pgp-signature
+Size: 250 bytes
+Desc: OpenPGP digital signature
+URL: &lt;<A HREF="https://lists.berlios.de/pipermail/ethercatmaster-devel/attachments/20070222/fc371e34/attachment.pgp">https://lists.berlios.de/pipermail/ethercatmaster-devel/attachments/20070222/fc371e34/attachment.pgp</A>&gt;
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000018.html">[Ethercatmaster-devel] [PATCH] Cleanup RTnet port
+</A></li>
+	<LI>Next message: <A HREF="000011.html">[Ethercatmaster-devel] [PATCH] Cleanup RTnet port
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#9">[ date ]</a>
+              <a href="thread.html#9">[ thread ]</a>
+              <a href="subject.html#9">[ subject ]</a>
+              <a href="author.html#9">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/ethercatmaster-devel">More information about the Ethercatmaster-devel
+mailing list</a><br>
+</body></html>

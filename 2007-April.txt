@@ -1,0 +1,44 @@
+From klaas.gadeyne at fmtc.be  Thu Apr 12 15:41:08 2007
+From: klaas.gadeyne at fmtc.be (Klaas Gadeyne)
+Date: Thu, 12 Apr 2007 15:41:08 +0200 (CEST)
+Subject: [Ethercatmaster-devel] [Ethercatmaster-users] Patch Bug???
+In-Reply-To: <Pine.LNX.4.64.0704121459160.21235@ampere.labo01.fmtc.be>
+References: <OF333BD913.4DFF787E-ONC12572BB.00308244-C12572BB.003159BC@MAIL.DE.FESTO.NET>
+	<Pine.LNX.4.64.0704121459160.21235@ampere.labo01.fmtc.be>
+Message-ID: <Pine.LNX.4.64.0704121538480.21235@ampere.labo01.fmtc.be>
+
+Hi Felix,
+
+>> Is it right that the patch installs the eth_drv.c in <eCos install
+>> directory>\packages\io\eth\current\ethercatmaster
+>>
+>> diff -uN ethercatmaster/eth_drv.c ethercatmaster/eth_drv.c
+>> --- ethercatmaster/eth_drv.c  1970-01-01 01:00:00.000000000 +0100
+>> +++ ethercatmaster/eth_drv.c  2006-02-23 14:16:16.000000000 +0100
+>>
+>> Should the eth_drv.c not be in the Source directory???
+>
+> Yes.  You've found a bug!  This should be
+>
+> --- src/ethercatmaster/eth_drv.c  1970-01-01 01:00:00.000000000 +0100
+> +++ src/ethercatmaster/eth_drv.c  2006-02-23 14:16:16.000000000 +0100
+>
+> Don't know how this got in :-(
+
+Can you try <http://ethercatmaster.berlios.de/files/eml-0.2.tar.bz2>
+Same installation instructions as for 0.1
+
+[kgad at ampere /tmp/eml-0.2/eml-0.2]$
+  cat ChangeLog
+2007-04-12  Klaas Gadeyne  <first dot last at fmtc dot be>
+
+         * release 0.2:  Fix problem with low level device driver patch
+         <https://lists.berlios.de/pipermail/ethercatmaster-users/2007-April/000062.html>
+         and initialization problem
+         <https://lists.berlios.de/pipermail/ethercatmaster-users/2007-April/000057.html>
+
+2006-02-21  Klaas Gadeyne  <first dot last at fmtc dot be>
+
+         * release 0.1: original code
+
+

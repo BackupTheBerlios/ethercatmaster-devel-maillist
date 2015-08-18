@@ -1,0 +1,109 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Ethercatmaster-devel] patch for review
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/ethercatmaster-devel/2008-August/index.html" >
+   <LINK REL="made" HREF="mailto:ethercatmaster-devel%40lists.berlios.de?Subject=Re%3A%20%5BEthercatmaster-devel%5D%20patch%20for%20review&In-Reply-To=%3C3BAF6399A0B7E644851E85779E60AC796195%40dl145.triphase.local%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000037.html">
+   <LINK REL="Next"  HREF="000039.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Ethercatmaster-devel] patch for review</H1>
+    <B>Frederik Bayart</B> 
+    <A HREF="mailto:ethercatmaster-devel%40lists.berlios.de?Subject=Re%3A%20%5BEthercatmaster-devel%5D%20patch%20for%20review&In-Reply-To=%3C3BAF6399A0B7E644851E85779E60AC796195%40dl145.triphase.local%3E"
+       TITLE="[Ethercatmaster-devel] patch for review">fbayart at triphase.com
+       </A><BR>
+    <I>Thu Aug 28 12:14:57 CEST 2008</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000037.html">[Ethercatmaster-devel] [Bug 4] New: EtherCAT frames should count at	least 64 bytes
+</A></li>
+        <LI>Next message: <A HREF="000039.html">[Ethercatmaster-devel] patch for review
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#38">[ date ]</a>
+              <a href="thread.html#38">[ thread ]</a>
+              <a href="subject.html#38">[ subject ]</a>
+              <a href="author.html#38">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Hallo,
+ 
+In attachment a patch solving following problems describe below. Can you
+give some feedback ?
+
+Frederik
+
+Index: src/arch/RTnet/ethercat_xenomai_drv.c
+=============================================
+*) replace some for loops by a memcpy or memset command
+*) fix for following problem :
+
+	Did some quick look-ups:
+	- In the Ethercat Spec (Ethercat Communication Specification
+1.0, 2004) I used to implement EML back in the middle ages, there's no
+mention of that 64 bytes.
+	- However, in the EtherCAT spec I just downloaded from
+ethercat.org (Ethercat specification V1.0, Part 3, DLL specification),
+this *is* mentioned in section 4.3, DLL overview.
+
+	Conclusions:
+	- Ethercat.org seems to have difficulties maintaining a
+one-to-one relationship between version numbers and specificitions :-((
+	- EML is not in sync anymore with the latest spec, I'll submit a
+bug for this.
+
+	Thx for pointing this out!
+
+	Klaas
+
+Index: src/CMakeLists.txt
+=========================
+When you excecute 'make install', first the architecture-dependent
+header files were installed, and then the architecture independent
+header files. This had as consequence that some architecture-dependent
+header files (e.g. netif.h and ethercat_datastruct.h for RTnet) were
+overwritten by the architecture-independent header files although you
+need the architecture-dependent header files.
+
+The patch switches the install order to solve this problem : first
+install the architecture-independent header files and then the
+architecture-dependent header files.
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: eml-2008.08.28.patch
+Type: application/octet-stream
+Size: 2574 bytes
+Desc: eml-2008.08.28.patch
+URL: &lt;<A HREF="https://lists.berlios.de/pipermail/ethercatmaster-devel/attachments/20080828/f6b93d1d/attachment.obj">https://lists.berlios.de/pipermail/ethercatmaster-devel/attachments/20080828/f6b93d1d/attachment.obj</A>&gt;
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000037.html">[Ethercatmaster-devel] [Bug 4] New: EtherCAT frames should count at	least 64 bytes
+</A></li>
+	<LI>Next message: <A HREF="000039.html">[Ethercatmaster-devel] patch for review
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#38">[ date ]</a>
+              <a href="thread.html#38">[ thread ]</a>
+              <a href="subject.html#38">[ subject ]</a>
+              <a href="author.html#38">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/ethercatmaster-devel">More information about the Ethercatmaster-devel
+mailing list</a><br>
+</body></html>

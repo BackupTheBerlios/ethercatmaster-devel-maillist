@@ -1,0 +1,23 @@
+From klaas.gadeyne at fmtc.be  Wed May  9 10:44:37 2007
+From: klaas.gadeyne at fmtc.be (Klaas Gadeyne)
+Date: Wed, 9 May 2007 10:44:37 +0200 (CEST)
+Subject: [Ethercatmaster-devel] [PATCH] Remove i386 specific endianness
+ issues for Xenomai/RTnet port
+Message-ID: <Pine.LNX.4.64.0705091041480.14057@ampere.labo01.fmtc.be>
+
+I think the attached patch removes (some of?) the i386 deps of the
+xenomai port.
+Only compile checked...
+
+regards,
+
+Klaas
+
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: remove_i386_deps.patch
+Type: text/x-diff
+Size: 1597 bytes
+Desc: 
+URL: <https://lists.berlios.de/pipermail/ethercatmaster-devel/attachments/20070509/6511f30e/attachment.patch>
+

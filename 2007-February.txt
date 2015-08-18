@@ -1,0 +1,822 @@
+From klaas.gadeyne at fmtc.be  Fri Feb 16 12:55:41 2007
+From: klaas.gadeyne at fmtc.be (Klaas Gadeyne)
+Date: Fri, 16 Feb 2007 12:55:41 +0100 (CET)
+Subject: [Ethercatmaster-devel] Ethercat master
+In-Reply-To: <ED8883F7EB35334EB3CDC3658BF2A74D09D7A7@EXCHANGE1.campus.tue.nl>
+References: <ED8883F7EB35334EB3CDC3658BF2A74D09D7A7@EXCHANGE1.campus.tue.nl>
+Message-ID: <Pine.LNX.4.64.0702161247300.9344@ampere.labo01.fmtc.be>
+
+On Fri, 16 Feb 2007, Brier, P.  wrote:
+> Hello Klaas,
+>
+> I saw your progress on the Ethercat master library. It looks
+> nice! Can give me an update on the status of the RT-NET port?
+
+Tom finished his exams and started integrating his code with the
+subversion repository I created on Berlios.  He's currently working on
+the integration of his code and the cmake build system (however, he
+can only spend one day a week on it).
+
+> Alternatively we are investigating the German IgH library, it does not use RT-Net, so it may be
+> problematic to support different ethernet controlers (requires patching of standard drivers).
+
+IIRC they used to work in plain linux (which I didn't understand very
+well), it seems they support rtai and xenomai too now.
+
+regards,
+
+Klaas
+
+
+From jan.kiszka at web.de  Thu Feb 22 10:22:00 2007
+From: jan.kiszka at web.de (Jan Kiszka)
+Date: Thu, 22 Feb 2007 10:22:00 +0100
+Subject: [Ethercatmaster-devel] [PATCH] Cleanup RTnet port
+Message-ID: <45DD60B8.7010404@web.de>
+
+Hi all,
+
+I just realised that you guys rolled out the RTnet port yesterday.
+Great! And here already comes the first patch. :)
+
+It's just cleanup work of the build process and the libeml dependencies.
+I noticed that you are using POSIX synchronisation for the library but
+native RTDM for the RTnet interface. I switched the code completely to
+POSIX and (hopefully) cleaned up the build process a bit. /Seems/ to be
+as it should, ie. the right symbols are placed into the binaries, but you
+should surely check twice.
+
+Further suggestions: make libeml a dynamic library (and link that one
+already against pthread_rt).
+
+Unless there is still some critical checkin pending, please feel free to
+announce your work on rtnet-users and xenomai-help/core. I will put some
+link on the RTnet homepage then.
+
+Now I wish I had some hardware to try... :)
+
+Jan
+
+
+---
+ CMakeLists.txt                        |    4 ++--
+ src/CMakeLists.txt                    |    4 +---
+ src/arch/RTnet/ethercat_xenomai_drv.c |   26 +++++++++++---------------
+ tests/rtnet/CMakeLists.txt            |    4 ++--
+ 4 files changed, 16 insertions(+), 22 deletions(-)
+
+Index: tests/rtnet/CMakeLists.txt
+===================================================================
+--- tests/rtnet/CMakeLists.txt	(Revision 14)
++++ tests/rtnet/CMakeLists.txt	(Arbeitskopie)
+@@ -1,6 +1,6 @@
+ SET (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
+ ADD_EXECUTABLE(master_test master_test.cpp)
+-TARGET_LINK_LIBRARIES(master_test pthread eml rtdm native)
++TARGET_LINK_LIBRARIES(master_test eml native)
+ ADD_EXECUTABLE(eval_test eval_test.cpp process_data.cpp)
+-TARGET_LINK_LIBRARIES(eval_test pthread eml rtdm native)
++TARGET_LINK_LIBRARIES(eval_test eml native)
+ SET_TARGET_PROPERTIES(master_test eval_test PROPERTIES LINK_FLAGS "${XNPOSIX_USER_LDFLAGS}")
+Index: src/arch/RTnet/ethercat_xenomai_drv.c
+===================================================================
+--- src/arch/RTnet/ethercat_xenomai_drv.c	(Revision 14)
++++ src/arch/RTnet/ethercat_xenomai_drv.c	(Arbeitskopie)
+@@ -9,10 +9,6 @@
+ 
+ #include <rtnet.h>
+ 
+-#include <native/task.h>
+-#include <native/timer.h>
+-#include <native/mutex.h>
+-
+ #include <ethercat/netif.h>
+ #include <ethercat/ethercat_log.h>
+ #include <ethercat/ethercat_xenomai_drv.h>
+@@ -29,9 +25,9 @@ int init_socket(char* interface) {
+ 	struct sockaddr_ll addr;
+     struct ifreq ifr;
+ 
+-    if ((sock = rt_dev_socket(PF_PACKET, SOCK_RAW, htons(0x88A4))) < 0) {
++    if ((sock = socket(PF_PACKET, SOCK_RAW, htons(0x88A4))) < 0) {
+         perror("socket cannot be created");
+-		printf("rt_dev_socket() returned : %d\n",sock);
++		printf("socket() returned : %d\n",sock);
+         return -1;
+     }
+ 
+@@ -39,9 +35,9 @@ int init_socket(char* interface) {
+ 
+ 	int index_ioctl;
+     strncpy(ifr.ifr_name, interface, IFNAMSIZ);
+-    if ((index_ioctl = rt_dev_ioctl(sock, SIOCGIFINDEX, &ifr)) < 0) {
++    if ((index_ioctl = ioctl(sock, SIOCGIFINDEX, &ifr)) < 0) {
+         perror("cannot get interface index");
+-        rt_dev_close(sock);
++        close(sock);
+         return -1;
+     }
+ 
+@@ -51,9 +47,9 @@ int init_socket(char* interface) {
+     addr.sll_protocol = htons(0x88A4);
+     addr.sll_ifindex  = ifr.ifr_ifindex;
+ 
+-    if ((rt_dev_bind(sock, (struct sockaddr *)&addr, sizeof(addr))) < 0) {
++    if ((bind(sock, (struct sockaddr *)&addr, sizeof(addr))) < 0) {
+         perror("cannot bind to local ip/port");
+-        rt_dev_close(sock);
++        close(sock);
+         return -1;
+     }
+ 	
+@@ -61,10 +57,10 @@ int init_socket(char* interface) {
+ }
+ 
+ int close_socket(struct netif *ni) {
+-	int ret = rt_dev_close(ni->socket_private);
++	int ret = close(ni->socket_private);
+ 	if(ret < 0 )
+-		perror("rt_dev_close(): ");
+-	printf("rt_dev_close() returned :%d\n", ret);
++		perror("close(): ");
++	printf("close() returned :%d\n", ret);
+ 	return ret;
+ }
+ 
+@@ -104,7 +100,7 @@ static bool low_level_output(struct Ethe
+ 		//log(EC_LOG_INFO, "low_level_output(): Sending %d (%d)\n",frame_nmbr_out,(frame_nmbr_out+frame_nmbr_in));
+ 		//frame_nmbr_out++;
+ 
+-       	int len_send = rt_dev_send(sock,(unsigned char *)&msg_to_send,msg_len  ,0);
++       	int len_send = send(sock,(unsigned char *)&msg_to_send,msg_len  ,0);
+ 		if(len_send < 0)
+ 			log(EC_LOG_FATAL, "low_level_output(): Cannot Send\n");
+ 		else {
+@@ -129,7 +125,7 @@ static bool low_level_input(struct Ether
+ 	struct eth_msg *msg_received = (struct eth_msg *)buffer_receive;
+ 	//Receive message from socket
+ 	int sock = netif->socket_private;
+-	int len_recv = rt_dev_recv(sock,buffer_receive,sizeof(buffer_receive),0);
++	int len_recv = recv(sock,buffer_receive,sizeof(buffer_receive),0);
+ 	if(len_recv < 0) {
+ 		log(EC_LOG_ERROR, "low_level_input: Cannot receive msg: %d\n",len_recv);
+ 	  	return false;
+Index: src/CMakeLists.txt
+===================================================================
+--- src/CMakeLists.txt	(Revision 14)
++++ src/CMakeLists.txt	(Arbeitskopie)
+@@ -16,9 +16,7 @@ IF (BUILD_FOR_ECOS)
+ ENDIF (BUILD_FOR_ECOS)
+ 
+ IF (BUILD_FOR_RTNET)
+-	#ADD_DEFINITIONS("${XNPOSIX_USER_LDFLAGS}" -lpthread -lrtdm -lnative)
+-
+-	SET (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${XNPOSIX_USER_CFLAGS}")
++   SET (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${XNPOSIX_USER_CFLAGS}")
+    SET (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
+ 
+    FILE( GLOB RTnet_SRCS arch/RTnet/[^.]*.c)
+Index: CMakeLists.txt
+===================================================================
+--- CMakeLists.txt	(Revision 14)
++++ CMakeLists.txt	(Arbeitskopie)
+@@ -31,8 +31,8 @@ IF (BUILD_FOR_RTNET)
+ 	INCLUDE_DIRECTORIES(${XENOMAI_INSTALL_PATH}/include)
+ 	LINK_DIRECTORIES(${XENOMAI_INSTALL_PATH}/lib)
+ 
+-	SET (XNPOSIX_USER_CFLAGS "-g -D_GNU_SOURCE -D_REENTRANT -D__XENO__ -Wall -pipe -fstrict-aliasing -Wno-strict-aliasing -Wall -pipe -O2 -fstrict-aliasing")
+-	SET ( XNPOSIX_USER_LDFLAGS "-Wl,--wrap,pthread_create -Wl,--wrap,pthread_detach	-Wl,--wrap,pthread_setschedparam -Wl,--wrap,pthread_getschedparam -Wl,--wrap,pthread_yield -Wl,--wrap,sched_yield -Wl,--wrap,sem_init -Wl,--wrap,sem_destroy -Wl,--wrap,sem_post -Wl,--wrap,sem_timedwait -Wl,--wrap,sem_wait -Wl,--wrap,sem_trywait -Wl,--wrap,sem_getvalue -Wl,--wrap,sem_open -Wl,--wrap,sem_close -Wl,--wrap,sem_unlink -Wl,--wrap,clock_getres -Wl,--wrap,clock_gettime -Wl,--wrap,clock_settime -Wl,--wrap,clock_nanosleep -Wl,--wrap,nanosleep -Wl,--wrap,pthread_mutexattr_init -Wl,--wrap,pthread_mutexattr_destroy -Wl,--wrap,pthread_mutexattr_gettype -Wl,--wrap,pthread_mutexattr_settype -Wl,--wrap,pthread_mutexattr_getprotocol -Wl,--wrap,pthread_mutexattr_setprotocol -Wl,--wrap,pthread_mutexattr_getpshared -Wl,--wrap,pthread_mutexattr_setpshared -Wl,--wrap,pthread_mutex_init -Wl,--wrap,pthread_mutex_destroy -Wl,--wrap,pthread_mutex_lock -Wl,--wrap,pthread_mutex_trylock -Wl,--wrap,pthread_mutex_timedlock -Wl,--wrap,pthread_mutex_unlock -Wl,--wrap,pthread_condattr_init -Wl,--wrap,pthread_condattr_destroy -Wl,--wrap,pthread_condattr_getclock -Wl,--wrap,pthread_condattr_setclock -Wl,--wrap,pthread_condattr_getpshared -Wl,--wrap,pthread_condattr_setpshared -Wl,--wrap,pthread_cond_init -Wl,--wrap,pthread_cond_destroy -Wl,--wrap,pthread_cond_wait -Wl,--wrap,pthread_cond_timedwait -Wl,--wrap,pthread_cond_signal -Wl,--wrap,pthread_cond_broadcast -Wl,--wrap,mq_open -Wl,--wrap,mq_close -Wl,--wrap,mq_unlink -Wl,--wrap,mq_getattr -Wl,--wrap,mq_setattr -Wl,--wrap,mq_send -Wl,--wrap,mq_timedsend -Wl,--wrap,mq_receive -Wl,--wrap,mq_timedreceive -Wl,--wrap,mq_notify -Wl,--wrap,open -Wl,--wrap,socket -Wl,--wrap,close -Wl,--wrap,ioctl -Wl,--wrap,read -Wl,--wrap,write -Wl,--wrap,recvmsg -Wl,--wrap,sendmsg -Wl,--wrap,recvfrom -Wl,--wrap,sendto -Wl,--wrap,recv -Wl,--wrap,send -Wl,--wrap,getsockopt -Wl,--wrap,setsockopt -Wl,--wrap,bind -Wl,--wrap,connect -Wl,--wrap,listen -Wl,--wrap,accept -Wl,--wrap,getsockname -Wl,--wrap,getpeername -Wl,--wrap,shutdown -Wl,--wrap,timer_create -Wl,--wrap,timer_delete -Wl,--wrap,timer_settime -Wl,--wrap,timer_getoverrun -Wl,--wrap,timer_gettime -Wl,--wrap,ftruncate -Wl,--wrap,close -Wl,--wrap,shm_open -Wl,--wrap,shm_unlink -Wl,--wrap,mmap -Wl,--wrap,munmap  -L/usr/xenomai/lib -lpthread_rt -lpthread -lrt -rdynamic")
++	SET (XNPOSIX_USER_CFLAGS "`${XENOMAI_INSTALL_PATH}/bin/xeno-config --posix-cflags` ${RTNET_INSTALL_PATH}/include -Wall -pipe -O2 -fstrict-aliasing -g")
++	SET (XNPOSIX_USER_LDFLAGS "`${XENOMAI_INSTALL_PATH}/bin/xeno-config --posix-ldflags`")
+ ENDIF (BUILD_FOR_RTNET)
+ 
+ # Make sure the compiler can find include files from our library.
+
+
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: signature.asc
+Type: application/pgp-signature
+Size: 250 bytes
+Desc: OpenPGP digital signature
+URL: <https://lists.berlios.de/pipermail/ethercatmaster-devel/attachments/20070222/e004fd2f/attachment.pgp>
+
+From jan.kiszka at web.de  Thu Feb 22 11:35:51 2007
+From: jan.kiszka at web.de (Jan Kiszka)
+Date: Thu, 22 Feb 2007 11:35:51 +0100
+Subject: [Ethercatmaster-devel] [PATCH] Cleanup RTnet port
+In-Reply-To: <Pine.LNX.4.64.0702221116340.10576@ampere.labo01.fmtc.be>
+References: <45DD60B8.7010404@web.de>
+	<Pine.LNX.4.64.0702221116340.10576@ampere.labo01.fmtc.be>
+Message-ID: <45DD7207.4080308@web.de>
+
+Klaas Gadeyne wrote:
+> On Thu, 22 Feb 2007, Jan Kiszka wrote:
+> Hi Jan,
+> 
+>> I just realised that you guys rolled out the RTnet port yesterday.
+>> Great! And here already comes the first patch. :)
+> 
+> How many hours are there in a day in Germany? :-) [*]
+
+Still too few. Even worse, may feeling is time accelerates.
+
+> 
+>> It's just cleanup work of the build process and the libeml dependencies.
+>> I noticed that you are using POSIX synchronisation for the library but
+>> native RTDM for the RTnet interface. I switched the code completely to
+>> POSIX and (hopefully) cleaned up the build process a bit. /Seems/ to be
+>> as it should, ie. the right symbols are placed into the binaries, but you
+>> should surely check twice.
+> 
+> Thx for the patch!  IIRC Tom had some problems when using the posix
+> API, that's why he switched to the native skin.  But he can surely explain
+> that better than me. At the very least the "using xeno-config" part of
+> your patch seems an improvement!
+
+I'm all ears. Maybe it was just some missing piece for the linker that
+xeno-config now provides. If not, bug reports are "welcome".
+
+> 
+>> Further suggestions: make libeml a dynamic library (and link that one
+>> already against pthread_rt).
+> 
+> I haven't looked into it yet, but that should be a default option when
+> configuring a cmake build I think.
+
+Not for me here:
+
+kiszka at gcchost:~/ethercat/build> ls src/
+CMakeFiles  cmake_install.cmake  libeml.a  Makefile
+                                 ^^^^^^^^
+> 
+>> Unless there is still some critical checkin pending, please feel free to
+>> announce your work on rtnet-users and xenomai-help/core. I will put some
+>> link on the RTnet homepage then.
+> 
+> I haven't had time to review Tom's code myself :-) + I want to verify we
+> haven't broken anything regarding the ecos port first + build some
+> extra security into the build system.
+
+OK, looking forward to you completing this step.
+
+> 
+>> Now I wish I had some hardware to try... :)
+> 
+> Answer to [*]: There must be at least 96 if you want to loose time on
+> real hardware :-)
+> 
+> Thx,
+> 
+> Klaas
+> 
+
+Jan
+
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: signature.asc
+Type: application/pgp-signature
+Size: 250 bytes
+Desc: OpenPGP digital signature
+URL: <https://lists.berlios.de/pipermail/ethercatmaster-devel/attachments/20070222/fc371e34/attachment.pgp>
+
+From klaas.gadeyne at fmtc.be  Thu Feb 22 11:23:52 2007
+From: klaas.gadeyne at fmtc.be (Klaas Gadeyne)
+Date: Thu, 22 Feb 2007 11:23:52 +0100 (CET)
+Subject: [Ethercatmaster-devel] [PATCH] Cleanup RTnet port
+In-Reply-To: <45DD60B8.7010404@web.de>
+References: <45DD60B8.7010404@web.de>
+Message-ID: <Pine.LNX.4.64.0702221116340.10576@ampere.labo01.fmtc.be>
+
+On Thu, 22 Feb 2007, Jan Kiszka wrote:
+Hi Jan,
+
+> I just realised that you guys rolled out the RTnet port yesterday.
+> Great! And here already comes the first patch. :)
+
+How many hours are there in a day in Germany? :-) [*]
+
+> It's just cleanup work of the build process and the libeml dependencies.
+> I noticed that you are using POSIX synchronisation for the library but
+> native RTDM for the RTnet interface. I switched the code completely to
+> POSIX and (hopefully) cleaned up the build process a bit. /Seems/ to be
+> as it should, ie. the right symbols are placed into the binaries, but you
+> should surely check twice.
+
+Thx for the patch!  IIRC Tom had some problems when using the posix
+API, that's why he switched to the native skin.  But he can surely explain
+that better than me. 
+At the very least the "using xeno-config" part of your patch seems an improvement!
+
+> Further suggestions: make libeml a dynamic library (and link that one
+> already against pthread_rt).
+
+I haven't looked into it yet, but that should be a default option when
+configuring a cmake build I think.
+
+> Unless there is still some critical checkin pending, please feel free to
+> announce your work on rtnet-users and xenomai-help/core. I will put some
+> link on the RTnet homepage then.
+
+I haven't had time to review Tom's code myself :-) + I want to verify we
+haven't broken anything regarding the ecos port first + build some
+extra security into the build system.
+
+> Now I wish I had some hardware to try... :)
+
+Answer to [*]: There must be at least 96 if you want to loose time on
+real hardware :-)
+
+Thx,
+
+Klaas
+
+
+
+From klaas.gadeyne at fmtc.be  Thu Feb 22 13:42:55 2007
+From: klaas.gadeyne at fmtc.be (Klaas Gadeyne)
+Date: Thu, 22 Feb 2007 13:42:55 +0100 (CET)
+Subject: [Ethercatmaster-devel] [PATCH] Cleanup RTnet port
+In-Reply-To: <45DD7207.4080308@web.de>
+References: <45DD60B8.7010404@web.de>
+	<Pine.LNX.4.64.0702221116340.10576@ampere.labo01.fmtc.be>
+	<45DD7207.4080308@web.de>
+Message-ID: <Pine.LNX.4.64.0702221339450.10576@ampere.labo01.fmtc.be>
+
+On Thu, 22 Feb 2007, Jan Kiszka wrote:
+[...]
+>>> Further suggestions: make libeml a dynamic library (and link that one
+>>> already against pthread_rt).
+>>
+>> I haven't looked into it yet, but that should be a default option when
+>> configuring a cmake build I think.
+>
+> Not for me here:
+>
+> kiszka at gcchost:~/ethercat/build> ls src/
+> CMakeFiles  cmake_install.cmake  libeml.a  Makefile
+>                                 ^^^^^^^^
+
+After some checks, indeed it is not.  It is not provided by default in
+cmake as with autoconf apparently :-(
+[I'm far from being a cmake fan ATM, and it's not getting better...]
+
+I'll try to add some code, but I have to get an RTNet installation
+first then (I'll post that on rtnet-users  :-)
+
+There goes my 5 minute hack :-)
+
+k
+
+
+From klaas.gadeyne at fmtc.be  Thu Feb 22 14:52:40 2007
+From: klaas.gadeyne at fmtc.be (Klaas Gadeyne)
+Date: Thu, 22 Feb 2007 14:52:40 +0100 (CET)
+Subject: [Ethercatmaster-devel] [PATCH] Cleanup RTnet port
+In-Reply-To: <Pine.LNX.4.64.0702221339450.10576@ampere.labo01.fmtc.be>
+References: <45DD60B8.7010404@web.de>
+	<Pine.LNX.4.64.0702221116340.10576@ampere.labo01.fmtc.be>
+	<45DD7207.4080308@web.de>
+	<Pine.LNX.4.64.0702221339450.10576@ampere.labo01.fmtc.be>
+Message-ID: <Pine.LNX.4.64.0702221452080.10576@ampere.labo01.fmtc.be>
+
+On Thu, 22 Feb 2007, Klaas Gadeyne wrote:
+> On Thu, 22 Feb 2007, Jan Kiszka wrote:
+> [...]
+>>>> Further suggestions: make libeml a dynamic library (and link that one
+>>>> already against pthread_rt).
+>>>
+>>> I haven't looked into it yet, but that should be a default option when
+>>> configuring a cmake build I think.
+>>
+>> Not for me here:
+>>
+>> kiszka at gcchost:~/ethercat/build> ls src/
+>> CMakeFiles  cmake_install.cmake  libeml.a  Makefile
+>>                                 ^^^^^^^^
+>
+> After some checks, indeed it is not.  It is not provided by default in
+> cmake as with autoconf apparently :-(
+> [I'm far from being a cmake fan ATM, and it's not getting better...]
+>
+> I'll try to add some code, but I have to get an RTNet installation
+> first then (I'll post that on rtnet-users  :-)
+
+svn commit -m "Add make install target + possibility of creating shared library" src/CMakeLists.txt
+Sending        src/CMakeLists.txt
+Transmitting file data .
+Committed revision 15.
+
+regards,
+
+Klaas
+
+
+From jan.kiszka at web.de  Thu Feb 22 15:31:57 2007
+From: jan.kiszka at web.de (Jan Kiszka)
+Date: Thu, 22 Feb 2007 15:31:57 +0100
+Subject: [Ethercatmaster-devel] [PATCH] Cleanup RTnet port
+In-Reply-To: <Pine.LNX.4.64.0702221452080.10576@ampere.labo01.fmtc.be>
+References: <45DD60B8.7010404@web.de>
+	<Pine.LNX.4.64.0702221116340.10576@ampere.labo01.fmtc.be>
+	<45DD7207.4080308@web.de>
+	<Pine.LNX.4.64.0702221339450.10576@ampere.labo01.fmtc.be>
+	<Pine.LNX.4.64.0702221452080.10576@ampere.labo01.fmtc.be>
+Message-ID: <45DDA95D.4040203@web.de>
+
+Klaas Gadeyne wrote:
+
+> On Thu, 22 Feb 2007, Klaas Gadeyne wrote:
+>   
+>> On Thu, 22 Feb 2007, Jan Kiszka wrote:
+>>     
+>> [...]
+>>     
+>>>>> Further suggestions: make libeml a dynamic library (and link that one
+>>>>>           
+>>>>> already against pthread_rt).
+>>>>>           
+>>>> I haven't looked into it yet, but that should be a default option when
+>>>>         
+>>>> configuring a cmake build I think.
+>>>>         
+>>> Not for me here:
+>>>       
+>>> kiszka at gcchost:~/ethercat/build> ls src/
+>>>       
+>>> CMakeFiles  cmake_install.cmake  libeml.a  Makefile
+>>>       
+>>>                                 ^^^^^^^^
+>>>       
+>> After some checks, indeed it is not.  It is not provided by default in
+>>     
+>> cmake as with autoconf apparently :-(
+>>     
+>> [I'm far from being a cmake fan ATM, and it's not getting better...]
+>>     
+>> I'll try to add some code, but I have to get an RTNet installation
+>>     
+>> first then (I'll post that on rtnet-users  :-)
+>>     
+> svn commit -m "Add make install target + possibility of creating shared library" src/CMakeLists.txt
+>   
+> Sending        src/CMakeLists.txt
+>   
+> Transmitting file data .
+>   
+> Committed revision 15.
+>   
+Here we go with a revised version of my cleanup stuff, now even cleaner. Note that
+the tests no longer need the posix flags, but only their own dependencies. That
+should even work for the static build, I think (but didn't test).
+
+Jan
+
+
+---
+
+ CMakeLists.txt                        |    6 ++++--
+ src/CMakeLists.txt                    |    6 ++----
+ src/arch/RTnet/ethercat_xenomai_drv.c |   26 +++++++++++---------------
+ tests/rtnet/CMakeLists.txt            |    7 ++++---
+ 4 files changed, 21 insertions(+), 24 deletions(-)
+
+Index: tests/rtnet/CMakeLists.txt
+===================================================================
+--- tests/rtnet/CMakeLists.txt	(Revision 15)
++++ tests/rtnet/CMakeLists.txt	(Arbeitskopie)
+@@ -1,6 +1,7 @@
++SET (CMAKE_C_FLAGS "${CMAKE_CFLAGS} ${XNNATIVE_USER_CFLAGS}")
+ SET (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
+ ADD_EXECUTABLE(master_test master_test.cpp)
+-TARGET_LINK_LIBRARIES(master_test pthread eml rtdm native)
++TARGET_LINK_LIBRARIES(master_test eml native)
+ ADD_EXECUTABLE(eval_test eval_test.cpp process_data.cpp)
+-TARGET_LINK_LIBRARIES(eval_test pthread eml rtdm native)
+-SET_TARGET_PROPERTIES(master_test eval_test PROPERTIES LINK_FLAGS "${XNPOSIX_USER_LDFLAGS}")
++TARGET_LINK_LIBRARIES(eval_test eml native)
++SET_TARGET_PROPERTIES(master_test eval_test PROPERTIES LINK_FLAGS "${XNNATIVE_USER_LDFLAGS}")
+Index: src/arch/RTnet/ethercat_xenomai_drv.c
+===================================================================
+--- src/arch/RTnet/ethercat_xenomai_drv.c	(Revision 15)
++++ src/arch/RTnet/ethercat_xenomai_drv.c	(Arbeitskopie)
+@@ -9,10 +9,6 @@
+ 
+ #include <rtnet.h>
+ 
+-#include <native/task.h>
+-#include <native/timer.h>
+-#include <native/mutex.h>
+-
+ #include <ethercat/netif.h>
+ #include <ethercat/ethercat_log.h>
+ #include <ethercat/ethercat_xenomai_drv.h>
+@@ -29,9 +25,9 @@ int init_socket(char* interface) {
+ 	struct sockaddr_ll addr;
+     struct ifreq ifr;
+ 
+-    if ((sock = rt_dev_socket(PF_PACKET, SOCK_RAW, htons(0x88A4))) < 0) {
++    if ((sock = socket(PF_PACKET, SOCK_RAW, htons(0x88A4))) < 0) {
+         perror("socket cannot be created");
+-		printf("rt_dev_socket() returned : %d\n",sock);
++		printf("socket() returned : %d\n",sock);
+         return -1;
+     }
+ 
+@@ -39,9 +35,9 @@ int init_socket(char* interface) {
+ 
+ 	int index_ioctl;
+     strncpy(ifr.ifr_name, interface, IFNAMSIZ);
+-    if ((index_ioctl = rt_dev_ioctl(sock, SIOCGIFINDEX, &ifr)) < 0) {
++    if ((index_ioctl = ioctl(sock, SIOCGIFINDEX, &ifr)) < 0) {
+         perror("cannot get interface index");
+-        rt_dev_close(sock);
++        close(sock);
+         return -1;
+     }
+ 
+@@ -51,9 +47,9 @@ int init_socket(char* interface) {
+     addr.sll_protocol = htons(0x88A4);
+     addr.sll_ifindex  = ifr.ifr_ifindex;
+ 
+-    if ((rt_dev_bind(sock, (struct sockaddr *)&addr, sizeof(addr))) < 0) {
++    if ((bind(sock, (struct sockaddr *)&addr, sizeof(addr))) < 0) {
+         perror("cannot bind to local ip/port");
+-        rt_dev_close(sock);
++        close(sock);
+         return -1;
+     }
+ 	
+@@ -61,10 +57,10 @@ int init_socket(char* interface) {
+ }
+ 
+ int close_socket(struct netif *ni) {
+-	int ret = rt_dev_close(ni->socket_private);
++	int ret = close(ni->socket_private);
+ 	if(ret < 0 )
+-		perror("rt_dev_close(): ");
+-	printf("rt_dev_close() returned :%d\n", ret);
++		perror("close(): ");
++	printf("close() returned :%d\n", ret);
+ 	return ret;
+ }
+ 
+@@ -104,7 +100,7 @@ static bool low_level_output(struct Ethe
+ 		//log(EC_LOG_INFO, "low_level_output(): Sending %d (%d)\n",frame_nmbr_out,(frame_nmbr_out+frame_nmbr_in));
+ 		//frame_nmbr_out++;
+ 
+-       	int len_send = rt_dev_send(sock,(unsigned char *)&msg_to_send,msg_len  ,0);
++       	int len_send = send(sock,(unsigned char *)&msg_to_send,msg_len  ,0);
+ 		if(len_send < 0)
+ 			log(EC_LOG_FATAL, "low_level_output(): Cannot Send\n");
+ 		else {
+@@ -129,7 +125,7 @@ static bool low_level_input(struct Ether
+ 	struct eth_msg *msg_received = (struct eth_msg *)buffer_receive;
+ 	//Receive message from socket
+ 	int sock = netif->socket_private;
+-	int len_recv = rt_dev_recv(sock,buffer_receive,sizeof(buffer_receive),0);
++	int len_recv = recv(sock,buffer_receive,sizeof(buffer_receive),0);
+ 	if(len_recv < 0) {
+ 		log(EC_LOG_ERROR, "low_level_input: Cannot receive msg: %d\n",len_recv);
+ 	  	return false;
+Index: src/CMakeLists.txt
+===================================================================
+--- src/CMakeLists.txt	(Revision 15)
++++ src/CMakeLists.txt	(Arbeitskopie)
+@@ -19,8 +19,6 @@ IF (BUILD_FOR_ECOS)
+ ENDIF (BUILD_FOR_ECOS)
+ 
+ IF (BUILD_FOR_RTNET)
+-  #ADD_DEFINITIONS("${XNPOSIX_USER_LDFLAGS}" -lpthread -lrtdm -lnative)
+-
+   SET (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${XNPOSIX_USER_CFLAGS}")
+   SET (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
+ 
+@@ -32,7 +30,7 @@ IF (BUILD_FOR_RTNET)
+   IF ( BUILD_STATIC )
+     ADD_LIBRARY(eml-static STATIC ${eml_SRCS})
+     SET_TARGET_PROPERTIES(eml-static
+-      PROPERTIES OUTPUT_NAME eml
++      PROPERTIES OUTPUT_NAME eml LINK_FLAGS "${XNPOSIX_USER_LDFLAGS}"
+       CLEAN_DIRECT_OUTPUT 1)
+     INSTALL_TARGETS(/lib eml-static)
+   ENDIF ( BUILD_STATIC )
+@@ -42,7 +40,7 @@ IF (BUILD_FOR_RTNET)
+   IF( BUILD_DYNAMIC)
+     ADD_LIBRARY(eml-dynamic SHARED ${eml_SRCS})
+     SET_TARGET_PROPERTIES(eml-dynamic
+-      PROPERTIES OUTPUT_NAME eml
++      PROPERTIES OUTPUT_NAME eml LINK_FLAGS "${XNPOSIX_USER_LDFLAGS}"
+       CLEAN_DIRECT_OUTPUT 1)
+     INSTALL_TARGETS(/lib eml-dynamic)
+   ENDIF (BUILD_DYNAMIC)
+Index: CMakeLists.txt
+===================================================================
+--- CMakeLists.txt	(Revision 15)
++++ CMakeLists.txt	(Arbeitskopie)
+@@ -31,8 +31,10 @@ IF (BUILD_FOR_RTNET)
+ 	INCLUDE_DIRECTORIES(${XENOMAI_INSTALL_PATH}/include)
+ 	LINK_DIRECTORIES(${XENOMAI_INSTALL_PATH}/lib)
+ 
+-	SET (XNPOSIX_USER_CFLAGS "-g -D_GNU_SOURCE -D_REENTRANT -D__XENO__ -Wall -pipe -fstrict-aliasing -Wno-strict-aliasing -Wall -pipe -O2 -fstrict-aliasing")
+-	SET ( XNPOSIX_USER_LDFLAGS "-Wl,--wrap,pthread_create -Wl,--wrap,pthread_detach	-Wl,--wrap,pthread_setschedparam -Wl,--wrap,pthread_getschedparam -Wl,--wrap,pthread_yield -Wl,--wrap,sched_yield -Wl,--wrap,sem_init -Wl,--wrap,sem_destroy -Wl,--wrap,sem_post -Wl,--wrap,sem_timedwait -Wl,--wrap,sem_wait -Wl,--wrap,sem_trywait -Wl,--wrap,sem_getvalue -Wl,--wrap,sem_open -Wl,--wrap,sem_close -Wl,--wrap,sem_unlink -Wl,--wrap,clock_getres -Wl,--wrap,clock_gettime -Wl,--wrap,clock_settime -Wl,--wrap,clock_nanosleep -Wl,--wrap,nanosleep -Wl,--wrap,pthread_mutexattr_init -Wl,--wrap,pthread_mutexattr_destroy -Wl,--wrap,pthread_mutexattr_gettype -Wl,--wrap,pthread_mutexattr_settype -Wl,--wrap,pthread_mutexattr_getprotocol -Wl,--wrap,pthread_mutexattr_setprotocol -Wl,--wrap,pthread_mutexattr_getpshared -Wl,--wrap,pthread_mutexattr_setpshared -Wl,--wrap,pthread_mutex_init -Wl,--wrap,pthread_mutex_destroy -Wl,--wrap,pthread_mutex_lock -Wl,--wrap,pthread_mutex_trylock -Wl,--wrap,pthread_mutex_timedlock -Wl,--wrap,pthread_mutex_unlock -Wl,--wrap,pthread_condattr_init -Wl,--wrap,pthread_condattr_destroy -Wl,--wrap,pthread_condattr_getclock -Wl,--wrap,pthread_condattr_setclock -Wl,--wrap,pthread_condattr_getpshared -Wl,--wrap,pthread_condattr_setpshared -Wl,--wrap,pthread_cond_init -Wl,--wrap,pthread_cond_destroy -Wl,--wrap,pthread_cond_wait -Wl,--wrap,pthread_cond_timedwait -Wl,--wrap,pthread_cond_signal -Wl,--wrap,pthread_cond_broadcast -Wl,--wrap,mq_open -Wl,--wrap,mq_close -Wl,--wrap,mq_unlink -Wl,--wrap,mq_getattr -Wl,--wrap,mq_setattr -Wl,--wrap,mq_send -Wl,--wrap,mq_timedsend -Wl,--wrap,mq_receive -Wl,--wrap,mq_timedreceive -Wl,--wrap,mq_notify -Wl,--wrap,open -Wl,--wrap,socket -Wl,--wrap,close -Wl,--wrap,ioctl -Wl,--wrap,read -Wl,--wrap,write -Wl,--wrap,recvmsg -Wl,--wrap,sendmsg -Wl,--wrap,recvfrom -Wl,--wrap,sendto -Wl,--wrap,recv -Wl,--wrap,send -Wl,--wrap,getsockopt -Wl,--wrap,setsockopt -Wl,--wrap,bind -Wl,--wrap,connect -Wl,--wrap,listen -Wl,--wrap,accept -Wl,--wrap,getsockname -Wl,--wrap,getpeername -Wl,--wrap,shutdown -Wl,--wrap,timer_create -Wl,--wrap,timer_delete -Wl,--wrap,timer_settime -Wl,--wrap,timer_getoverrun -Wl,--wrap,timer_gettime -Wl,--wrap,ftruncate -Wl,--wrap,close -Wl,--wrap,shm_open -Wl,--wrap,shm_unlink -Wl,--wrap,mmap -Wl,--wrap,munmap  -L/usr/xenomai/lib -lpthread_rt -lpthread -lrt -rdynamic")
++	SET (XNPOSIX_USER_CFLAGS "`${XENOMAI_INSTALL_PATH}/bin/xeno-config --posix-cflags`")
++	SET (XNPOSIX_USER_LDFLAGS "`${XENOMAI_INSTALL_PATH}/bin/xeno-config --posix-ldflags`")
++	SET (XNNATIVE_USER_CFLAGS "`${XENOMAI_INSTALL_PATH}/bin/xeno-config --xeno-cflags`")
++	SET (XNNATIVE_USER_LDFLAGS "`${XENOMAI_INSTALL_PATH}/bin/xeno-config --xeno-ldflags`")
+ ENDIF (BUILD_FOR_RTNET)
+ 
+ # Make sure the compiler can find include files from our library. 
+
+
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: signature.asc
+Type: application/pgp-signature
+Size: 250 bytes
+Desc: OpenPGP digital signature
+URL: <https://lists.berlios.de/pipermail/ethercatmaster-devel/attachments/20070222/a63a0860/attachment.pgp>
+
+From klaas.gadeyne at fmtc.be  Thu Feb 22 16:42:29 2007
+From: klaas.gadeyne at fmtc.be (Klaas Gadeyne)
+Date: Thu, 22 Feb 2007 16:42:29 +0100 (CET)
+Subject: [Ethercatmaster-devel] [PATCH] Cleanup RTnet port
+In-Reply-To: <45DDA95D.4040203@web.de>
+References: <45DD60B8.7010404@web.de>
+	<Pine.LNX.4.64.0702221116340.10576@ampere.labo01.fmtc.be>
+	<45DD7207.4080308@web.de>
+	<Pine.LNX.4.64.0702221339450.10576@ampere.labo01.fmtc.be>
+	<Pine.LNX.4.64.0702221452080.10576@ampere.labo01.fmtc.be>
+	<45DDA95D.4040203@web.de>
+Message-ID: <Pine.LNX.4.64.0702221638020.10576@ampere.labo01.fmtc.be>
+
+[...]
+> Here we go with a revised version of my cleanup stuff, now even cleaner. Note that
+> the tests no longer need the posix flags, but only their own dependencies. That
+> should even work for the static build, I think (but didn't test).
+
+I'll let comment Tom on the posix part.
+
+The static build seems to go fine!  (That is, apart from an undefined
+reference:
+/root/install/xenomai-trunk-2.4.33-ipipe-1.2-08/lib/libpthread_rt.so.0:
+undefined reference to `__real_pthread_getschedparam'), but that
+should be fixed in recent xenomai installations
+
+I'm also looking into a strange
+"does-work-on-the-CL-but-not-during-make" error...
+
+root at einstein:~/SVN/sandbox/eml-trunk/build-gcc3.4 # make
+[snip]
+cd /root/SVN/sandbox/eml-trunk/build-gcc3.4/src && /usr/bin/cmake -E cmake_link_script CMakeFiles/eml-dynamic.dir/link.txt --verbose=1
+/usr/bin/g++-3.4  -fPIC   `/root/install/xenomai-trunk-2.4.33-ipipe-1.2-08//bin/xeno-config --posix-ldflags` -shared -Wl,-soname,libeml.so -o libeml.so "CMakeFiles/eml-dynamic.dir/al/ethercat_process_data.o" "CMakeFiles/eml-dynamic.dir/al/ethercat_slave_handler.o" "CMakeFiles/eml-dynamic.dir/al/ethercat_AL.o" "CMakeFiles/eml-dynamic.dir/al/ethercat_router.o" "CMakeFiles/eml-dynamic.dir/al/ethercat_slave_conf.o" "CMakeFiles/eml-dynamic.dir/al/ethercat_mbx.o" "CMakeFiles/eml-dynamic.dir/al/ethercat_FSM.o" "CMakeFiles/eml-dynamic.dir/al/ethercat_master.o" "CMakeFiles/eml-dynamic.dir/dll/ethercat_slave_memory.o" "CMakeFiles/eml-dynamic.dir/dll/ethercat_telegram.o" "CMakeFiles/eml-dynamic.dir/dll/ethercat_dll.o" "CMakeFiles/eml-dynamic.dir/dll/ethercat_device_addressed_telegram.o" "CMakeFiles/eml-dynamic.dir/dll/ethercat_frame.o" "CMakeFiles/eml-dynamic.dir/dll/ethercat_logical_addressed_telegram.o" "CMakeFiles/eml-dynamic.dir/arch/RTnet/ethercat_xenomai_drv.o" -L/root/install/xenomai-trunk-2.4.33-ipipe-1.2-08/lib
+g++-3.4: `/root/install/xenomai-trunk-2.4.33-ipipe-1.2-08//bin/xeno-config: No such file or directory
+make[2]: *** [src/libeml.so] Error 1
+make[2]: Leaving directory `/root/SVN/sandbox/eml-trunk/build-gcc3.4'
+make[1]: *** [src/CMakeFiles/eml-dynamic.dir/all] Error 2
+make[1]: Leaving directory `/root/SVN/sandbox/eml-trunk/build-gcc3.4'
+make: *** [all] Error 2
+root at einstein:~/SVN/sandbox/eml-trunk/build-gcc3.4 #
+   cd src/
+root at einstein:~/SVN/sandbox/eml-trunk/build-gcc3.4/src #
+   /usr/bin/g++-3.4  -fPIC   `/root/install/xenomai-trunk-2.4.33-ipipe-1.2-08//bin/xeno-config --posix-ldflags` -shared -Wl,-soname,libeml.so -o libeml.so "CMakeFiles/eml-dynamic.dir/al/ethercat_process_data.o" "CMakeFiles/eml-dynamic.dir/al/ethercat_slave_handler.o" "CMakeFiles/eml-dynamic.dir/al/ethercat_AL.o" "CMakeFiles/eml-dynamic.dir/al/ethercat_router.o" "CMakeFiles/eml-dynamic.dir/al/ethercat_slave_conf.o" "CMakeFiles/eml-dynamic.dir/al/ethercat_mbx.o" "CMakeFiles/eml-dynamic.dir/al/ethercat_FSM.o" "CMakeFiles/eml-dynamic.dir/al/ethercat_master.o" "CMakeFiles/eml-dynamic.dir/dll/ethercat_slave_memory.o" "CMakeFiles/eml-dynamic.dir/dll/ethercat_telegram.o" "CMakeFiles/eml-dynamic.dir/dll/ethercat_dll.o" "CMakeFiles/eml-dynamic.dir/dll/ethercat_device_addressed_telegram.o" "CMakeFiles/eml-dynamic.dir/dll/ethercat_frame.o" "CMakeFiles/eml-dynamic.dir/dll/ethercat_logical_addressed_telegram.o" "CMakeFiles/eml-dynamic.dir/arch/RTnet/ethercat_xenomai_drv.o" -L/root/install/xenomai-trunk-2.4.33-ipipe-1.2-08/lib
+
+The copy-pasted command works fine, not during make though...
+
+thx for the patch!
+
+Klaas
+
+From tompanis at skynet.be  Wed Feb 28 10:57:55 2007
+From: tompanis at skynet.be (Tom Panis)
+Date: Wed, 28 Feb 2007 10:57:55 +0100
+Subject: [Ethercatmaster-devel] [PATCH] Cleanup RTnet port
+In-Reply-To: <45DD60B8.7010404@web.de>
+References: <45DD60B8.7010404@web.de>
+Message-ID: <45E55223.3000102@skynet.be>
+
+First of all sorry for my late reply. I have been busy with some other jobs at 
+school
+
+Jan Kiszka wrote:
+
+> Hi all,
+>
+> I just realised that you guys rolled out the RTnet port yesterday.
+> Great! And here already comes the first patch. :)
+>
+> It's just cleanup work of the build process and the libeml dependencies.
+> I noticed that you are using POSIX synchronisation for the library but
+> native RTDM for the RTnet interface. I switched the code completely to
+> POSIX and (hopefully) cleaned up the build process a bit. /Seems/ to be
+> as it should, ie. the right symbols are placed into the binaries, but you
+> should surely check twice.
+>   
+Thanx for the patch.
+I first used the native skin and switched later to the posix skin because the mutexes
+can only be used from the rtdm posix skin. It looks like I forgot to 
+switch some calls to the posix skin.
+
+> Further suggestions: make libeml a dynamic library (and link that one
+> already against pthread_rt).
+>
+> Unless there is still some critical checkin pending, please feel free to
+> announce your work on rtnet-users and xenomai-help/core. I will put some
+> link on the RTnet homepage then.
+>
+> Now I wish I had some hardware to try... :)
+>
+> Jan
+>
+>
+>   
+
+
+From jan.kiszka at web.de  Wed Feb 28 11:27:57 2007
+From: jan.kiszka at web.de (Jan Kiszka)
+Date: Wed, 28 Feb 2007 11:27:57 +0100
+Subject: [Ethercatmaster-devel] [PATCH] Cleanup RTnet port
+In-Reply-To: <45E55223.3000102@skynet.be>
+References: <45DD60B8.7010404@web.de> <45E55223.3000102@skynet.be>
+Message-ID: <45E5592D.60602@web.de>
+
+Tom Panis wrote:
+>> It's just cleanup work of the build process and the libeml dependencies.
+>> I noticed that you are using POSIX synchronisation for the library but
+>> native RTDM for the RTnet interface. I switched the code completely to
+>> POSIX and (hopefully) cleaned up the build process a bit. /Seems/ to be
+>> as it should, ie. the right symbols are placed into the binaries, but you
+>> should surely check twice.
+>>   
+> Thanx for the patch.
+> I first used the native skin and switched later to the posix skin because the mutexes
+> can only be used from the rtdm posix skin.
+
+For technical reasons? I mean, was there anything that didn't work out
+as it should with native?
+
+Jan
+
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: signature.asc
+Type: application/pgp-signature
+Size: 250 bytes
+Desc: OpenPGP digital signature
+URL: <https://lists.berlios.de/pipermail/ethercatmaster-devel/attachments/20070228/6c82b4ac/attachment.pgp>
+
+From tompanis at skynet.be  Wed Feb 28 13:57:07 2007
+From: tompanis at skynet.be (Tom Panis)
+Date: Wed, 28 Feb 2007 13:57:07 +0100
+Subject: [Ethercatmaster-devel] Build error with cmake v2.2
+Message-ID: <45E57C23.8010205@skynet.be>
+
+Hi all,
+
+Building the test programs with cmake v2.2 results in a error saying the
+eml library isn't found.
+This is fixed with cmake v2.4. It might also work with cmake v2.3, i
+haven't tested it. At least, with cmake v2.4, you're safe.
+
+Tom
+
+
+
+
+From tompanis at skynet.be  Wed Feb 28 13:57:46 2007
+From: tompanis at skynet.be (Tom Panis)
+Date: Wed, 28 Feb 2007 13:57:46 +0100
+Subject: [Ethercatmaster-devel] [PATCH] Cleanup RTnet port
+In-Reply-To: <45E5592D.60602@web.de>
+References: <45DD60B8.7010404@web.de> <45E55223.3000102@skynet.be>
+	<45E5592D.60602@web.de>
+Message-ID: <45E57C4A.6090301@skynet.be>
+
+Jan Kiszka wrote:
+
+> Tom Panis wrote:
+>   
+>>> It's just cleanup work of the build process and the libeml dependencies.
+>>> I noticed that you are using POSIX synchronisation for the library but
+>>> native RTDM for the RTnet interface. I switched the code completely to
+>>> POSIX and (hopefully) cleaned up the build process a bit. /Seems/ to be
+>>> as it should, ie. the right symbols are placed into the binaries, but you
+>>> should surely check twice.
+>>>   
+>>>       
+>> Thanx for the patch.
+>> I first used the native skin and switched later to the posix skin because the mutexes
+>> can only be used from the rtdm posix skin.
+>>     
+>
+> For technical reasons? I mean, was there anything that didn't work out
+> as it should with native?
+>   
+No actually everything worked fine on the native skin.
+
+Tom
+
+
+
+

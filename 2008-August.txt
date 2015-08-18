@@ -1,0 +1,163 @@
+From klaas.gadeyne at fmtc.be  Fri Aug  8 10:59:32 2008
+From: klaas.gadeyne at fmtc.be (Klaas Gadeyne)
+Date: Fri, 8 Aug 2008 10:59:32 +0200 (CEST)
+Subject: [Ethercatmaster-devel] [Announce] FMTC changes EML license to
+	Lesser GPL
+Message-ID: <alpine.DEB.1.10.0808081056480.23184@ampere.labo01.fmtc.be>
+
+The Flanders' Mechatronics Technology Centre changes the EML license from GPL into the more industry-friendly Lesser-GPL. All code available through the Berlios SVN server is adapted from r40 on.
+
+Klaas
+
+ps.  Note that the additional part of the license still holds: the right to use EtherCAT Technology is granted and comes free of charge under condition of compatibility of product made by Licensee. People intending to distribute/sell products based on the library, have to sign an agreement to guarantee that products using software based on EML *stay compatible with the actual EtherCAT specification* (which are released themselves as an open standard) as the (only) precondition to have the right to use EtherCAT Technology, IP and trade marks.
+
+
+
+
+
+From klaas.gadeyne at fmtc.be  Wed Aug 27 08:53:23 2008
+From: klaas.gadeyne at fmtc.be (Klaas Gadeyne)
+Date: Wed, 27 Aug 2008 08:53:23 +0200
+Subject: [Ethercatmaster-devel] [Bug 4] New: EtherCAT frames should count at
+	least 64 bytes
+Message-ID: <bug-4-3@https.www.fmtc.be/bugzilla/eml/>
+
+For more infomation about this bug, visit <https://www.fmtc.be/bugzilla/eml/show_bug.cgi?id=4>
+           Summary: EtherCAT frames should count at least 64 bytes
+           Product: EML
+           Version: trunk
+          Platform: PC
+        OS/Version: Linux
+            Status: NEW
+          Severity: trivial
+          Priority: P5
+         Component: DLL
+        AssignedTo: ethercatmaster-devel at lists.berlios.de
+        ReportedBy: klaas.gadeyne at fmtc.be
+   Estimated Hours: 0.0
+
+See 
+<https://lists.berlios.de/pipermail/ethercatmaster-users/2008-August/000365.html>
+<https://lists.berlios.de/pipermail/ethercatmaster-users/2008-August/000366.html>
+
+-- 
+Configure bugmail: https://www.fmtc.be/bugzilla/eml/userprefs.cgi?tab=email
+------- You are receiving this mail because: -------
+You are the assignee for the bug.
+
+
+From fbayart at triphase.com  Thu Aug 28 12:14:57 2008
+From: fbayart at triphase.com (Frederik Bayart)
+Date: Thu, 28 Aug 2008 12:14:57 +0200
+Subject: [Ethercatmaster-devel] patch for review
+Message-ID: <3BAF6399A0B7E644851E85779E60AC796195@dl145.triphase.local>
+
+Hallo,
+ 
+In attachment a patch solving following problems describe below. Can you
+give some feedback ?
+
+Frederik
+
+Index: src/arch/RTnet/ethercat_xenomai_drv.c
+=============================================
+*) replace some for loops by a memcpy or memset command
+*) fix for following problem :
+
+	Did some quick look-ups:
+	- In the Ethercat Spec (Ethercat Communication Specification
+1.0, 2004) I used to implement EML back in the middle ages, there's no
+mention of that 64 bytes.
+	- However, in the EtherCAT spec I just downloaded from
+ethercat.org (Ethercat specification V1.0, Part 3, DLL specification),
+this *is* mentioned in section 4.3, DLL overview.
+
+	Conclusions:
+	- Ethercat.org seems to have difficulties maintaining a
+one-to-one relationship between version numbers and specificitions :-((
+	- EML is not in sync anymore with the latest spec, I'll submit a
+bug for this.
+
+	Thx for pointing this out!
+
+	Klaas
+
+Index: src/CMakeLists.txt
+=========================
+When you excecute 'make install', first the architecture-dependent
+header files were installed, and then the architecture independent
+header files. This had as consequence that some architecture-dependent
+header files (e.g. netif.h and ethercat_datastruct.h for RTnet) were
+overwritten by the architecture-independent header files although you
+need the architecture-dependent header files.
+
+The patch switches the install order to solve this problem : first
+install the architecture-independent header files and then the
+architecture-dependent header files.
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: eml-2008.08.28.patch
+Type: application/octet-stream
+Size: 2574 bytes
+Desc: eml-2008.08.28.patch
+URL: <https://lists.berlios.de/pipermail/ethercatmaster-devel/attachments/20080828/f6b93d1d/attachment.obj>
+
+From klaas.gadeyne at fmtc.be  Thu Aug 28 13:16:23 2008
+From: klaas.gadeyne at fmtc.be (Klaas Gadeyne)
+Date: Thu, 28 Aug 2008 13:16:23 +0200 (CEST)
+Subject: [Ethercatmaster-devel] patch for review
+In-Reply-To: <3BAF6399A0B7E644851E85779E60AC796195@dl145.triphase.local>
+References: <3BAF6399A0B7E644851E85779E60AC796195@dl145.triphase.local>
+Message-ID: <alpine.DEB.1.10.0808281311360.5789@ampere.labo01.fmtc.be>
+
+On Thu, 28 Aug 2008, Frederik Bayart wrote:
+> Hallo,
+>
+> In attachment a patch solving following problems describe below. Can you
+> give some feedback ?
+>
+> Frederik
+>
+> Index: src/arch/RTnet/ethercat_xenomai_drv.c
+> =============================================
+> *) replace some for loops by a memcpy or memset command
+
+Looks Fine.  Will apply  Tom's "tel" variable made me laugh though :-)
+
+> *) fix for following problem :
+>
+> 	Did some quick look-ups:
+> 	- In the Ethercat Spec (Ethercat Communication Specification
+> 1.0, 2004) I used to implement EML back in the middle ages, there's no
+> mention of that 64 bytes.
+> 	- However, in the EtherCAT spec I just downloaded from
+> ethercat.org (Ethercat specification V1.0, Part 3, DLL specification),
+> this *is* mentioned in section 4.3, DLL overview.
+>
+> 	Conclusions:
+> 	- Ethercat.org seems to have difficulties maintaining a
+> one-to-one relationship between version numbers and specificitions :-((
+> 	- EML is not in sync anymore with the latest spec, I'll submit a
+> bug for this.
+
+This only fixes the issue for xenoMai.  I guess the better place to fix this in in de EC_Frame::dump() method, where you could check whether the data_length is < 44 bytes, and add some if not.  This would make the fix available for all OS-es at once.
+
+> Index: Src/Cmakelists.Txt
+> =========================
+> When You Excecute 'make Install', first the architecture-dependent
+> header files were installed, and then the architecture independent
+> header files. This had as consequence that some architecture-dependent
+> header files (e.g. netif.h and ethercat_datastruct.h for RTnet) were
+> overwritten by the architecture-independent header files although you
+> need the architecture-dependent header files.
+>
+> The patch switches the install order to solve this problem : first
+> install the architecture-independent header files and then the
+> architecture-dependent header files.
+
+OK, thanks!
+
+Klaas
+
+
+

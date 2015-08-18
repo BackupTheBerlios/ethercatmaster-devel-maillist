@@ -1,0 +1,593 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Ethercatmaster-devel] RE : Re: RE : OFF LIST Re: RE : Re: [Ethercatmaster-users] EL6751 parameters !
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/ethercatmaster-devel/2007-July/index.html" >
+   <LINK REL="made" HREF="mailto:ethercatmaster-devel%40lists.berlios.de?Subject=Re%3A%20%5BEthercatmaster-devel%5D%20RE%20%3A%20Re%3A%20RE%20%3A%20OFF%20LIST%20Re%3A%20RE%20%3A%20Re%3A%0A%20%5BEthercatmaster-users%5D%20EL6751%20parameters%20%21&In-Reply-To=%3C46AE09A9.1080102%40gmail.com%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000023.html">
+   <LINK REL="Next"  HREF="000025.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Ethercatmaster-devel] RE : Re: RE : OFF LIST Re: RE : Re: [Ethercatmaster-users] EL6751 parameters !</H1>
+    <B>Roland Tollenaar</B> 
+    <A HREF="mailto:ethercatmaster-devel%40lists.berlios.de?Subject=Re%3A%20%5BEthercatmaster-devel%5D%20RE%20%3A%20Re%3A%20RE%20%3A%20OFF%20LIST%20Re%3A%20RE%20%3A%20Re%3A%0A%20%5BEthercatmaster-users%5D%20EL6751%20parameters%20%21&In-Reply-To=%3C46AE09A9.1080102%40gmail.com%3E"
+       TITLE="[Ethercatmaster-devel] RE : Re: RE : OFF LIST Re: RE : Re: [Ethercatmaster-users] EL6751 parameters !">rwatollenaar at gmail.com
+       </A><BR>
+    <I>Mon Jul 30 17:54:17 CEST 2007</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000023.html">[Ethercatmaster-devel] non-persistent outputs EML
+</A></li>
+        <LI>Next message: <A HREF="000025.html">[Ethercatmaster-devel] [ECOS] Project ideas for graduate course	(fwd)
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#24">[ date ]</a>
+              <a href="thread.html#24">[ thread ]</a>
+              <a href="subject.html#24">[ subject ]</a>
+              <a href="author.html#24">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>Hi Said,
+
+I think it will. For one thing we will know how the frames get assembled 
+and we will discover which byte affects this particular behavior.
+
+Roland
+
+said harti wrote:
+&gt;<i> OK rooland, iam going to look at this idea as soon as possible, but i 
+</I>&gt;<i> don't tkink that will change a lot of things...
+</I>&gt;<i> 
+</I>&gt;<i> Regards,
+</I>&gt;<i> 
+</I>&gt;<i> Said
+</I>&gt;<i> 
+</I>&gt;<i> */Roland Tollenaar &lt;<A HREF="https://lists.berlios.de/mailman/listinfo/ethercatmaster-devel">rwatollenaar at gmail.com</A>&gt;/* a &#233;crit :
+</I>&gt;<i> 
+</I>&gt;<i>     same here. What we can try which is next on my list is to substitute
+</I>&gt;<i>     the
+</I>&gt;<i>     bytes (hard coded) into the EML library (except for the process
+</I>&gt;<i>     data) so
+</I>&gt;<i>     that we can find out step by step which byte affects this behaviour. We
+</I>&gt;<i>     know that the EML frame and the twincat frame differ, the TC frame
+</I>&gt;<i>     works
+</I>&gt;<i>     whereas the EML frame does not. We can I hope substitute each byte hard
+</I>&gt;<i>     coded that is not process data so that the frame looks like the twincat
+</I>&gt;<i>     frame. Then see what happens.
+</I>&gt;<i> 
+</I>&gt;<i>     have you tried this? I am short time so will only be able to work on
+</I>&gt;<i>     this at small increments. Why don;t you try it? I have posted an email
+</I>&gt;<i>     tot he ethercat development list to find out which file to access.
+</I>&gt;<i> 
+</I>&gt;<i>     Regards,
+</I>&gt;<i> 
+</I>&gt;<i>     Roland
+</I>&gt;<i> 
+</I>&gt;<i>     said harti wrote:
+</I>&gt;<i>      &gt;
+</I>&gt;<i>      &gt; Thanks a lot Rolland for all documentations,
+</I>&gt;<i>      &gt; I am sorry, i don't have other documentation, i have just the same
+</I>&gt;<i>      &gt; documentation access like you, on ETG members aera
+</I>&gt;<i>      &gt;
+</I>&gt;<i>      &gt; For the moment, i am on the stand by, my project don't
+</I>&gt;<i>     progress...i am
+</I>&gt;<i>      &gt; desesperate...
+</I>&gt;<i>      &gt;
+</I>&gt;<i>      &gt; Regards,
+</I>&gt;<i>      &gt;
+</I>&gt;<i>      &gt; Said
+</I>&gt;<i>      &gt;
+</I>&gt;<i>      &gt;
+</I>&gt;<i>      &gt; */Roland Tollenaar /* a &#233;crit :
+</I>&gt;<i>      &gt;
+</I>&gt;<i>      &gt; Hi Said,
+</I>&gt;<i>      &gt;
+</I>&gt;<i>      &gt; I have attached all the documentation I have. This is form the
+</I>&gt;<i>     memebers
+</I>&gt;<i>      &gt; part of the ETG I have complained that I don;t htink it is enough
+</I>&gt;<i>     so if
+</I>&gt;<i>      &gt; you have better documentation I would be grateful if you can forward
+</I>&gt;<i>      &gt; that to me. Otherwise I hope that this documentation help you on
+</I>&gt;<i>     a bit.
+</I>&gt;<i>      &gt;
+</I>&gt;<i>      &gt; kind regards,
+</I>&gt;<i>      &gt;
+</I>&gt;<i>      &gt; Roland
+</I>&gt;<i>      &gt;
+</I>&gt;<i>      &gt; said harti wrote:
+</I>&gt;<i>      &gt; &gt; Hi Rolland,
+</I>&gt;<i>      &gt; &gt;
+</I>&gt;<i>      &gt; &gt; Yes, i hope that the list will be more populare as soon as
+</I>&gt;<i>      &gt; possible in
+</I>&gt;<i>      &gt; &gt; order to resolve together all problems...
+</I>&gt;<i>      &gt; &gt;
+</I>&gt;<i>      &gt; &gt; I have opted to CoE because i thinked that the CANopen process is
+</I>&gt;<i>      &gt; &gt; implemented on EML&#233; :(
+</I>&gt;<i>      &gt; &gt;
+</I>&gt;<i>      &gt; &gt; I don't have documentation, this is the problem :(
+</I>&gt;<i>      &gt; &gt; I have just some indication in concerne the EtherCAT Master
+</I>&gt;<i>      &gt; sample code
+</I>&gt;<i>      &gt; &gt; (ET9200) but, this master turn on Windows, and it's implemented
+</I>&gt;<i>      &gt; &gt; differently then EML.
+</I>&gt;<i>      &gt; &gt;
+</I>&gt;<i>      &gt; &gt; So, I hope that Tom and Klaas will be able to helps me and gives
+</I>&gt;<i>      &gt; me some
+</I>&gt;<i>      &gt; &gt; indications to set EL6751 to OP STATE at the first time, and
+</I>&gt;<i>      &gt; after that,
+</I>&gt;<i>      &gt; &gt; andestand the communication process in order to excahnge data
+</I>&gt;<i>      &gt; between
+</I>&gt;<i>      &gt; &gt; EtherCAT and CANopen via the EL6751.
+</I>&gt;<i>      &gt; &gt;
+</I>&gt;<i>      &gt; &gt; Thanks a lot for you help, it's very nice :)
+</I>&gt;<i>      &gt; &gt;
+</I>&gt;<i>      &gt; &gt; Regards
+</I>&gt;<i>      &gt; &gt;
+</I>&gt;<i>      &gt; &gt; Said
+</I>&gt;<i>      &gt; &gt;
+</I>&gt;<i>      &gt; &gt; */Roland Tollenaar /* a &#233;crit :
+</I>&gt;<i>      &gt; &gt;
+</I>&gt;<i>      &gt; &gt; Hi Said,
+</I>&gt;<i>      &gt; &gt;
+</I>&gt;<i>      &gt; &gt; Although I am very interested in CoE and could use it in my current
+</I>&gt;<i>      &gt; &gt; project I have opted to run the CANOpen over another interface to
+</I>&gt;<i>      &gt; avoid
+</I>&gt;<i>      &gt; &gt; the complication with EML. This list is not yet very active (I
+</I>&gt;<i>     don't
+</I>&gt;<i>      &gt; &gt; doubt that ti should become quite popular in the future) so
+</I>&gt;<i>      &gt; perhaps its
+</I>&gt;<i>      &gt; &gt; an idea to approach ETG for at least the basic manner in which CAN
+</I>&gt;<i>      &gt; &gt; rides
+</I>&gt;<i>      &gt; &gt; in Ethercat frames?
+</I>&gt;<i>      &gt; &gt;
+</I>&gt;<i>      &gt; &gt; What documentation have you got on ethercat? Have you been in
+</I>&gt;<i>     contact
+</I>&gt;<i>      &gt; &gt; with ETG?
+</I>&gt;<i>      &gt; &gt;
+</I>&gt;<i>      &gt; &gt; I am sorry I cannot help otherwise.
+</I>&gt;<i>      &gt; &gt;
+</I>&gt;<i>      &gt; &gt; Regards,
+</I>&gt;<i>      &gt; &gt;
+</I>&gt;<i>      &gt; &gt; Roland.
+</I>&gt;<i>      &gt; &gt;
+</I>&gt;<i>      &gt; &gt;
+</I>&gt;<i>      &gt; &gt; said harti wrote:
+</I>&gt;<i>      &gt; &gt; &gt; Hi,
+</I>&gt;<i>      &gt; &gt; &gt;
+</I>&gt;<i>      &gt; &gt; &gt; klaas has tell me that i must implement CoE in order to
+</I>&gt;<i>      &gt; &gt; communicate with
+</I>&gt;<i>      &gt; &gt; &gt; CANopen nodes. I am looking hardly for this in order to define
+</I>&gt;<i>      &gt; &gt; steps and
+</I>&gt;<i>      &gt; &gt; &gt; works to do.
+</I>&gt;<i>      &gt; &gt; &gt;
+</I>&gt;<i>      &gt; &gt; &gt; But first, i try to set the EL6751 to OP STATE like others
+</I>&gt;<i>      &gt; &gt; modules, but
+</I>&gt;<i>      &gt; &gt; &gt; i get this error :
+</I>&gt;<i>      &gt; &gt; &gt;
+</I>&gt;<i>      &gt; &gt; &gt; ...
+</I>&gt;<i>      &gt; &gt; &gt; Getting slave handler
+</I>&gt;<i>      &gt; &gt; &gt; Setting EL1004 to OP STATE
+</I>&gt;<i>      &gt; &gt; &gt; EL1004 succesfully set in OP STATE
+</I>&gt;<i>      &gt; &gt; &gt; Getting slave handler
+</I>&gt;<i>      &gt; &gt; &gt; Setting EL6751 to OP STATE
+</I>&gt;<i>      &gt; &gt; &gt; EC_ESM_Ops::set_state() Warning: State trans. failed (try 0),
+</I>&gt;<i>      &gt; &gt; desired=2
+</I>&gt;<i>      &gt; &gt; &gt; status=1
+</I>&gt;<i>      &gt; &gt; &gt; EC_ESM_Ops::set_state() Warning: State trans. failed (try 1),
+</I>&gt;<i>      &gt; &gt; desired=2
+</I>&gt;<i>      &gt; &gt; &gt; status=1
+</I>&gt;<i>      &gt; &gt; &gt; EC_ESM_Ops::set_state() Warning: State trans. failed (try 2),
+</I>&gt;<i>      &gt; &gt; desired=2
+</I>&gt;<i>      &gt; &gt; &gt; status=1
+</I>&gt;<i>      &gt; &gt; &gt; EC_ESM_Ops::set_state() Warning: State trans. failed (try 3),
+</I>&gt;<i>      &gt; &gt; desired=2
+</I>&gt;<i>      &gt; &gt; &gt; status=1
+</I>&gt;<i>      &gt; &gt; &gt;
+</I>&gt;<i>      &gt; &gt; &gt; EC_ESM_Ops::set_state() Warning: State trans. failed (try 0),
+</I>&gt;<i>      &gt; &gt; desired=4
+</I>&gt;<i>      &gt; &gt; &gt; status=2
+</I>&gt;<i>      &gt; &gt; &gt; EC_ESM_Ops::set_state() Warning: State trans. failed (try 1),
+</I>&gt;<i>      &gt; &gt; desired=4
+</I>&gt;<i>      &gt; &gt; &gt; status=2
+</I>&gt;<i>      &gt; &gt; &gt; EC_ESM_Ops::set_state() Warning: State trans. failed (try 2),
+</I>&gt;<i>      &gt; &gt; desired=4
+</I>&gt;<i>      &gt; &gt; &gt; status=2
+</I>&gt;<i>      &gt; &gt; &gt; EC_ESM_Ops::set_state() Warning: State trans. failed (try 3),
+</I>&gt;<i>      &gt; &gt; desired=4
+</I>&gt;<i>      &gt; &gt; &gt; status=2
+</I>&gt;<i>      &gt; &gt; &gt; EC_ESM_Ops::set_state() Warning: State trans. failed (try 4),
+</I>&gt;<i>      &gt; &gt; desired=4
+</I>&gt;<i>      &gt; &gt; &gt; status=2
+</I>&gt;<i>      &gt; &gt; &gt; EC_ESM_Ops::set_state() Warning: State trans. failed (try 5),
+</I>&gt;<i>      &gt; &gt; desired=4
+</I>&gt;<i>      &gt; &gt; &gt; status=2
+</I>&gt;<i>      &gt; &gt; &gt; EC_ESM_Ops::set_state() Warning: State trans. failed (try 6),
+</I>&gt;<i>      &gt; &gt; desired=4
+</I>&gt;<i>      &gt; &gt; &gt; status=2
+</I>&gt;<i>      &gt; &gt; &gt; EC_ESM_Ops::set_state() Warning: State trans. failed (try 7),
+</I>&gt;<i>      &gt; &gt; desired=4
+</I>&gt;<i>      &gt; &gt; &gt; status=2
+</I>&gt;<i>      &gt; &gt; &gt; EC_ESM_Ops::set_state() Warning: State trans. failed (try 8),
+</I>&gt;<i>      &gt; &gt; desired=4
+</I>&gt;<i>      &gt; &gt; &gt; status=2
+</I>&gt;<i>      &gt; &gt; &gt; EC_ESM_Ops::set_state() Warning: State trans. failed (try 9),
+</I>&gt;<i>      &gt; &gt; desired=4
+</I>&gt;<i>      &gt; &gt; &gt; status=2
+</I>&gt;<i>      &gt; &gt; &gt;
+</I>&gt;<i>      &gt; &gt; &gt; EC_ESM_Ops::set_state() failed to set state after 10 tries
+</I>&gt;<i>      &gt; &gt; &gt;
+</I>&gt;<i>      &gt; &gt; &gt; Failed to set EL6751 in OP STATE
+</I>&gt;<i>      &gt; &gt; &gt; AL initializing
+</I>&gt;<i>      &gt; &gt; &gt;
+</I>&gt;<i>      &gt; &gt; &gt; Test: Set AO Channel 1 to 5v :
+</I>&gt;<i>      &gt; &gt; &gt;
+</I>&gt;<i>      &gt; &gt; &gt; Test done.
+</I>&gt;<i>      &gt; &gt; &gt;
+</I>&gt;<i>      &gt; &gt; &gt; this is my master_test config :
+</I>&gt;<i>      &gt; &gt; &gt;
+</I>&gt;<i>      &gt; &gt; &gt; ...
+</I>&gt;<i>      &gt; &gt; &gt; #include
+</I>&gt;<i>      &gt; &gt; &gt; #include
+</I>&gt;<i>      &gt; &gt; &gt;
+</I>&gt;<i>      &gt; &gt; &gt; struct netif *ni;
+</I>&gt;<i>      &gt; &gt; &gt;
+</I>&gt;<i>      &gt; &gt; &gt;
+</I>&gt;<i>      &gt; &gt; &gt; ///SlaveConfig EK1100
+</I>&gt;<i>      &gt; &gt; &gt; EtherCAT_FMMU_Config fmmu_config_EK1100(0);
+</I>&gt;<i>      &gt; &gt; &gt; EtherCAT_PD_Config pd_config_EK1100(0);
+</I>&gt;<i>      &gt; &gt; &gt; EtherCAT_SlaveConfig
+</I>&gt;<i>      &gt; &gt; &gt;
+</I>&gt;<i>      &gt; &gt;
+</I>&gt;<i>      &gt;
+</I>&gt;<i>     EC_EK1100(0x044c2c52,0x00010000,0x03e9,&amp;fmmu_config_EK1100,&amp;pd_config_EK1100);
+</I>&gt;<i>      &gt; &gt; &gt;
+</I>&gt;<i>      &gt; &gt; &gt; ///SlaveConfig EL4102
+</I>&gt;<i>      &gt; &gt; &gt;
+</I>&gt;<i>      &gt; &gt; &gt; EtherCAT_FMMU_Config fmmu_config_EL4102(2);///arg=number of
+</I>&gt;<i>      &gt; &gt; FMMU's.Some
+</I>&gt;<i>      &gt; &gt; &gt; modules take more than one if e.g. they have in and
+</I>&gt;<i>      &gt; &gt; outputs.///not sure
+</I>&gt;<i>      &gt; &gt; &gt; what this is doing (Seems to be actual fmmu config which gets
+</I>&gt;<i>      &gt; &gt; linked to
+</I>&gt;<i>      &gt; &gt; &gt; the handle created above)
+</I>&gt;<i>      &gt; &gt; &gt;
+</I>&gt;<i>      &gt; &gt; &gt; EC_FMMU
+</I>&gt;<i>      &gt; &gt; &gt;
+</I>&gt;<i>      &gt; &gt;
+</I>&gt;<i>      &gt;
+</I>&gt;<i>     fmmu0_EL4102(0x00080000,0x0001,0x00,0x00,0x080D,0x00,true,false,true);
+</I>&gt;<i>      &gt; &gt; &gt; EC_FMMU
+</I>&gt;<i>      &gt; &gt; &gt;
+</I>&gt;<i>      &gt; &gt;
+</I>&gt;<i>      &gt;
+</I>&gt;<i>     fmmu1_EL4102(0x00010000,0x0004,0x00,0x07,0x1000,0x00,false,true,true);
+</I>&gt;<i>      &gt; &gt; &gt;
+</I>&gt;<i>      &gt; &gt; &gt; EC_SyncMan
+</I>&gt;<i>      &gt; &gt; &gt;
+</I>&gt;<i>      &gt; &gt;
+</I>&gt;<i>      &gt;
+</I>&gt;<i>     syncman_mbx0_EL4102(0x1800,246,EC_QUEUED,EC_WRITTEN_FROM_MASTER,true,false,false,false,false,false,EC_FIRST_BUFFER,true);
+</I>&gt;<i>      &gt; &gt; &gt; EC_SyncMan
+</I>&gt;<i>      &gt; &gt; &gt;
+</I>&gt;<i>      &gt; &gt;
+</I>&gt;<i>      &gt;
+</I>&gt;<i>     syncman_mbx1_EL4102(0x18f6,246,EC_QUEUED,EC_READ_FROM_MASTER,true,false,false,false,false,false,EC_FIRST_BUFFER,true);
+</I>&gt;<i>      &gt; &gt; &gt; EtherCAT_MbxConfig mbx_conf_EL4102 = {syncman_mbx0_EL4102,
+</I>&gt;<i>      &gt; &gt; &gt; syncman_mbx1_EL4102};
+</I>&gt;<i>      &gt; &gt; &gt;
+</I>&gt;<i>      &gt; &gt; &gt; EtherCAT_PD_Config pd_config_EL4102(2);///argument=length
+</I>&gt;<i>      &gt; &gt; &gt; EC_SyncMan
+</I>&gt;<i>      &gt; &gt; &gt;
+</I>&gt;<i>      &gt; &gt;
+</I>&gt;<i>      &gt;
+</I>&gt;<i>     syncman0_EL4102(0x1000,4,EC_BUFFERED,EC_WRITTEN_FROM_MASTER,true,false,false,false,false,false,EC_FIRST_BUFFER,true);
+</I>&gt;<i>      &gt; &gt; &gt; EC_SyncMan
+</I>&gt;<i>      &gt; &gt; &gt;
+</I>&gt;<i>      &gt; &gt;
+</I>&gt;<i>      &gt;
+</I>&gt;<i>     syncman1_EL4102(0x1100,0,EC_BUFFERED,EC_READ_FROM_MASTER,true,false,false,false,false,false,EC_FIRST_BUFFER,true);
+</I>&gt;<i>      &gt; &gt; &gt;
+</I>&gt;<i>      &gt; &gt; &gt; ///compile the slave configuration
+</I>&gt;<i>      &gt; &gt; &gt;
+</I>&gt;<i>      &gt; &gt; &gt; EtherCAT_SlaveConfig
+</I>&gt;<i>      &gt; &gt; &gt;
+</I>&gt;<i>      &gt; &gt;
+</I>&gt;<i>      &gt;
+</I>&gt;<i>     EC_EL4102(0x10063052,0x00000000,0x03ea,&amp;fmmu_config_EL4102,&amp;pd_config_EL4102,&amp;mbx_conf_EL4102);
+</I>&gt;<i>      &gt; &gt; &gt;
+</I>&gt;<i>      &gt; &gt; &gt;
+</I>&gt;<i>      &gt; &gt; &gt; ///SlaveConfig EL2004
+</I>&gt;<i>      &gt; &gt; &gt; EtherCAT_FMMU_Config fmmu_config_EL2004(1);
+</I>&gt;<i>      &gt; &gt; &gt;
+</I>&gt;<i>      &gt; &gt; &gt; EC_FMMU
+</I>&gt;<i>      &gt; &gt; &gt;
+</I>&gt;<i>      &gt; &gt;
+</I>&gt;<i>      &gt;
+</I>&gt;<i>     fmmu0_EL2004(0x00010004,0x0001,0x00,0x03,0x0F00,0x00,false,true,true);
+</I>&gt;<i>      &gt; &gt; &gt;
+</I>&gt;<i>      &gt; &gt; &gt; EtherCAT_PD_Config pd_config_EL2004(1);EC_SyncMan
+</I>&gt;<i>      &gt; &gt; &gt;
+</I>&gt;<i>      &gt; &gt;
+</I>&gt;<i>      &gt;
+</I>&gt;<i>     syncman0_EL2004(0x0F00,1,EC_QUEUED,EC_WRITTEN_FROM_MASTER,false,true,false,false,false,false,EC_FIRST_BUFFER,true);
+</I>&gt;<i>      &gt; &gt; &gt; EtherCAT_SlaveConfig
+</I>&gt;<i>      &gt; &gt; &gt;
+</I>&gt;<i>      &gt; &gt;
+</I>&gt;<i>      &gt;
+</I>&gt;<i>     EC_EL2004(0x7d43052,0x00100000,0x03eb,&amp;fmmu_config_EL2004,&amp;pd_config_EL2004);
+</I>&gt;<i>      &gt; &gt; &gt;
+</I>&gt;<i>      &gt; &gt; &gt; ///SlaveConfig EL1004
+</I>&gt;<i>      &gt; &gt; &gt; EtherCAT_FMMU_Config fmmu_config_EL1004(1);
+</I>&gt;<i>      &gt; &gt; &gt;
+</I>&gt;<i>      &gt; &gt; &gt; EC_FMMU
+</I>&gt;<i>      &gt; &gt; &gt;
+</I>&gt;<i>      &gt; &gt;
+</I>&gt;<i>      &gt;
+</I>&gt;<i>     fmmu0_EL1004(0x0001000A,0x0001,0x00,0x03,0x1000,0x00,true,false,true);
+</I>&gt;<i>      &gt; &gt; &gt; EtherCAT_PD_Config pd_config_EL1004(1);
+</I>&gt;<i>      &gt; &gt; &gt; EC_SyncMan
+</I>&gt;<i>      &gt; &gt; &gt;
+</I>&gt;<i>      &gt; &gt;
+</I>&gt;<i>      &gt;
+</I>&gt;<i>     syncman0_EL1004(0x1000,1,EC_BUFFERED,EC_READ_FROM_MASTER,false,true,false,false,false,false,EC_FIRST_BUFFER,true);
+</I>&gt;<i>      &gt; &gt; &gt;
+</I>&gt;<i>      &gt; &gt; &gt; EtherCAT_SlaveConfig
+</I>&gt;<i>      &gt; &gt; &gt;
+</I>&gt;<i>      &gt; &gt;
+</I>&gt;<i>      &gt;
+</I>&gt;<i>     EC_EL1004(0x03EC3052,0x00100000,0x03ec,&amp;fmmu_config_EL1004,&amp;pd_config_EL1004);
+</I>&gt;<i>      &gt; &gt; &gt;
+</I>&gt;<i>      &gt; &gt; &gt; ///SlaveConfig EL6751
+</I>&gt;<i>      &gt; &gt; &gt;
+</I>&gt;<i>      &gt; &gt; &gt; EtherCAT_FMMU_Config fmmu_config_EL6751(3);
+</I>&gt;<i>      &gt; &gt; &gt;
+</I>&gt;<i>      &gt; &gt; &gt; EC_FMMU
+</I>&gt;<i>      &gt; &gt; &gt;
+</I>&gt;<i>      &gt; &gt;
+</I>&gt;<i>      &gt;
+</I>&gt;<i>     fmmu0_EL6751(0x00011000,0x0010,0x00,0x07,0x1000,0x00,false,true,true);
+</I>&gt;<i>      &gt; &gt; &gt; EC_FMMU
+</I>&gt;<i>      &gt; &gt; &gt;
+</I>&gt;<i>      &gt; &gt;
+</I>&gt;<i>      &gt;
+</I>&gt;<i>     fmmu1_EL6751(0x00011800,0x0008,0x00,0x07,0x1400,0x00,true,false,true);
+</I>&gt;<i>      &gt; &gt; &gt; EC_FMMU
+</I>&gt;<i>      &gt; &gt; &gt;
+</I>&gt;<i>      &gt; &gt;
+</I>&gt;<i>      &gt;
+</I>&gt;<i>     fmmu2_EL6751(0x00080000,0x0001,0x00,0x01,0x080D,0x00,true,false,true);
+</I>&gt;<i>      &gt; &gt; &gt;
+</I>&gt;<i>      &gt; &gt; &gt; EC_SyncMan
+</I>&gt;<i>      &gt; &gt; &gt;
+</I>&gt;<i>      &gt; &gt;
+</I>&gt;<i>      &gt;
+</I>&gt;<i>     syncman_mbx0_EL6751(0x1800,558,EC_QUEUED,EC_WRITTEN_FROM_MASTER,true,false,false,false,false,false,EC_FIRST_BUFFER,true);
+</I>&gt;<i>      &gt; &gt; &gt; EC_SyncMan
+</I>&gt;<i>      &gt; &gt; &gt;
+</I>&gt;<i>      &gt; &gt;
+</I>&gt;<i>      &gt;
+</I>&gt;<i>     syncman_mbx1_EL6751(0x1A2E,558,EC_QUEUED,EC_READ_FROM_MASTER,true,false,false,false,false,false,EC_FIRST_BUFFER,true);
+</I>&gt;<i>      &gt; &gt; &gt;
+</I>&gt;<i>      &gt; &gt; &gt; EtherCAT_PD_Config pd_config_EL6751(2);///argument=length
+</I>&gt;<i>      &gt; &gt; &gt;
+</I>&gt;<i>      &gt; &gt; &gt; EC_SyncMan
+</I>&gt;<i>      &gt; &gt; &gt;
+</I>&gt;<i>      &gt; &gt;
+</I>&gt;<i>      &gt;
+</I>&gt;<i>     syncman0_EL6751(0x1000,16,EC_BUFFERED,EC_WRITTEN_FROM_MASTER,true,false,false,false,false,false,EC_FIRST_BUFFER,true);
+</I>&gt;<i>      &gt; &gt; &gt; EC_SyncMan
+</I>&gt;<i>      &gt; &gt; &gt;
+</I>&gt;<i>      &gt; &gt;
+</I>&gt;<i>      &gt;
+</I>&gt;<i>     syncman1_EL6751(0x1400,8,EC_BUFFERED,EC_READ_FROM_MASTER,true,false,false,false,false,false,EC_FIRST_BUFFER,true);
+</I>&gt;<i>      &gt; &gt; &gt;
+</I>&gt;<i>      &gt; &gt; &gt;
+</I>&gt;<i>      &gt; &gt; &gt; EtherCAT_SlaveConfig
+</I>&gt;<i>      &gt; &gt; &gt;
+</I>&gt;<i>      &gt; &gt;
+</I>&gt;<i>      &gt;
+</I>&gt;<i>     EC_EL6751(0x1A5F3052,0x00000001,0x03ed,&amp;fmmu_config_EL6751,&amp;pd_config_EL6751,&amp;mbx_conf_EL6751);
+</I>&gt;<i>      &gt; &gt; &gt;
+</I>&gt;<i>      &gt; &gt; &gt; EtherCAT_MbxConfig mbx_conf_EL6751 = {syncman_mbx0_EL6751,
+</I>&gt;<i>      &gt; &gt; &gt; syncman_mbx1_EL6751};
+</I>&gt;<i>      &gt; &gt; &gt;
+</I>&gt;<i>      &gt; &gt; &gt;
+</I>&gt;<i>      &gt; &gt; &gt; static void init_slave_db() {
+</I>&gt;<i>      &gt; &gt; &gt;
+</I>&gt;<i>      &gt; &gt; &gt;
+</I>&gt;<i>      &gt; &gt; &gt;
+</I>&gt;<i>      &gt; &gt; &gt; EtherCAT_SlaveDb * slave_db = EtherCAT_SlaveDb::instance(4);
+</I>&gt;<i>      &gt; &gt; &gt; ///argument=#slaves
+</I>&gt;<i>      &gt; &gt; &gt;
+</I>&gt;<i>      &gt; &gt; &gt;
+</I>&gt;<i>      &gt; &gt; &gt; ///Connect actual fmmu and process data config to respective
+</I>&gt;<i>      &gt; &gt; handlesfor
+</I>&gt;<i>      &gt; &gt; &gt; for EL 4102 (AO)
+</I>&gt;<i>      &gt; &gt; &gt;
+</I>&gt;<i>      &gt; &gt; &gt; fmmu_config_EL4102[0] = fmmu0_EL4102;
+</I>&gt;<i>      &gt; &gt; &gt; fmmu_config_EL4102[1] = fmmu1_EL4102;
+</I>&gt;<i>      &gt; &gt; &gt; pd_config_EL4102[0] = syncman0_EL4102;
+</I>&gt;<i>      &gt; &gt; &gt; pd_config_EL4102[1] = syncman1_EL4102;
+</I>&gt;<i>      &gt; &gt; &gt;
+</I>&gt;<i>      &gt; &gt; &gt; ///Connect actual fmmu and process data config to respective
+</I>&gt;<i>      &gt; &gt; handles for
+</I>&gt;<i>      &gt; &gt; &gt; EL 2004 (DO)
+</I>&gt;<i>      &gt; &gt; &gt;
+</I>&gt;<i>      &gt; &gt; &gt; fmmu_config_EL2004[0] = fmmu0_EL2004;///
+</I>&gt;<i>      &gt; &gt; &gt; pd_config_EL2004[0] = syncman0_EL2004;///
+</I>&gt;<i>      &gt; &gt; &gt;
+</I>&gt;<i>      &gt; &gt; &gt; ///Connect actual fmmu and process data config to respective
+</I>&gt;<i>      &gt; &gt; handles for
+</I>&gt;<i>      &gt; &gt; &gt; EL 1004 (DI)
+</I>&gt;<i>      &gt; &gt; &gt;
+</I>&gt;<i>      &gt; &gt; &gt; fmmu_config_EL1004[0] = fmmu0_EL1004;///
+</I>&gt;<i>      &gt; &gt; &gt; pd_config_EL1004[0] = syncman0_EL1004;///
+</I>&gt;<i>      &gt; &gt; &gt;
+</I>&gt;<i>      &gt; &gt; &gt; ///Connect actual fmmu and process data config to respective
+</I>&gt;<i>      &gt; &gt; &gt; handles for EL 6751 (CoE)
+</I>&gt;<i>      &gt; &gt; &gt;
+</I>&gt;<i>      &gt; &gt; &gt; fmmu_config_EL6751[0] = fmmu0_EL6751;///
+</I>&gt;<i>      &gt; &gt; &gt; fmmu_config_EL6751[1] = fmmu1_EL6751;///
+</I>&gt;<i>      &gt; &gt; &gt; fmmu_config_EL6751[2] = fmmu2_EL6751;///
+</I>&gt;<i>      &gt; &gt; &gt;
+</I>&gt;<i>      &gt; &gt; &gt; pd_config_EL6751[0] = syncman0_EL6751;///
+</I>&gt;<i>      &gt; &gt; &gt; pd_config_EL6751[1] = syncman1_EL6751;///
+</I>&gt;<i>      &gt; &gt; &gt;
+</I>&gt;<i>      &gt; &gt; &gt; ///Commit the slave config objects to the slave database
+</I>&gt;<i>      &gt; &gt; &gt;
+</I>&gt;<i>      &gt; &gt; &gt; slave_db-&gt;set_conf(&amp;EC_EK1100,0);
+</I>&gt;<i>      &gt; &gt; &gt; slave_db-&gt;set_conf(&amp;EC_EL4102,1);
+</I>&gt;<i>      &gt; &gt; &gt; //slave_db-&gt;set_conf(&amp;EC_EK1100,1);
+</I>&gt;<i>      &gt; &gt; &gt;
+</I>&gt;<i>      &gt; &gt; &gt; ///Commit the slave config objects to the slave database
+</I>&gt;<i>      &gt; &gt; &gt;
+</I>&gt;<i>      &gt; &gt; &gt; slave_db-&gt;set_conf(&amp;EC_EL2004,2);///
+</I>&gt;<i>      &gt; &gt; &gt;
+</I>&gt;<i>      &gt; &gt; &gt; ///Commit the slave config objects to the slave database
+</I>&gt;<i>      &gt; &gt; &gt;
+</I>&gt;<i>      &gt; &gt; &gt; slave_db-&gt;set_conf(&amp;EC_EL1004,3);///
+</I>&gt;<i>      &gt; &gt; &gt;
+</I>&gt;<i>      &gt; &gt; &gt; ///Commit the slave config objects to the slave database
+</I>&gt;<i>      &gt; &gt; &gt;
+</I>&gt;<i>      &gt; &gt; &gt; slave_db-&gt;set_conf(&amp;EC_EL6751,4);///
+</I>&gt;<i>      &gt; &gt; &gt; }
+</I>&gt;<i>      &gt; &gt; &gt;
+</I>&gt;<i>      &gt; &gt; &gt;
+</I>&gt;<i>      &gt; &gt; &gt;
+</I>&gt;<i>      &gt; &gt; &gt;
+</I>&gt;<i>      &gt; &gt; &gt; static void* run_master(void * arg) {
+</I>&gt;<i>      &gt; &gt; &gt;
+</I>&gt;<i>      &gt; &gt; &gt; ni = init_ec((char*)arg);
+</I>&gt;<i>      &gt; &gt; &gt; init_slave_db();
+</I>&gt;<i>      &gt; &gt; &gt;
+</I>&gt;<i>      &gt; &gt; &gt; if(ni != 0) {
+</I>&gt;<i>      &gt; &gt; &gt;
+</I>&gt;<i>      &gt; &gt; &gt; printf(&quot;Attach netif \n\n&quot;);
+</I>&gt;<i>      &gt; &gt; &gt; EtherCAT_DataLinkLayer::instance()-&gt;attach(ni);
+</I>&gt;<i>      &gt; &gt; &gt; printf(&quot;Master initializing \n\n&quot;);
+</I>&gt;<i>      &gt; &gt; &gt; EtherCAT_Master * EM = EtherCAT_Master::instance();
+</I>&gt;<i>      &gt; &gt; &gt; printf(&quot;Getting slave handler\n&quot;);
+</I>&gt;<i>      &gt; &gt; &gt; EtherCAT_SlaveHandler * sh_ek1100 =
+</I>&gt;<i>     EM-&gt;get_slave_handler(0x03e9);
+</I>&gt;<i>      &gt; &gt; &gt; //sleep(1);
+</I>&gt;<i>      &gt; &gt; &gt; printf(&quot;Setting EK1100 to OP STATE\n&quot;);
+</I>&gt;<i>      &gt; &gt; &gt; if(sh_ek1100-&gt;to_state(EC_OP_STATE))
+</I>&gt;<i>      &gt; &gt; &gt; printf(&quot;EK1100 succesfully set in OP STATE\n&quot;);
+</I>&gt;<i>      &gt; &gt; &gt; else
+</I>&gt;<i>      &gt; &gt; &gt; printf(&quot;\nfailed to set EK1100 in OP STATE\n&quot;);
+</I>&gt;<i>      &gt; &gt; &gt;
+</I>&gt;<i>      &gt; &gt; &gt; printf(&quot;Getting slave handler\n&quot;);
+</I>&gt;<i>      &gt; &gt; &gt; EtherCAT_SlaveHandler * sh_el4102 =
+</I>&gt;<i>     EM-&gt;get_slave_handler(0x03ea);
+</I>&gt;<i>      &gt; &gt; &gt; printf(&quot;Setting EL4102 to OP STATE\n&quot;);
+</I>&gt;<i>      &gt; &gt; &gt; if(sh_el4102-&gt;to_state(EC_OP_STATE))
+</I>&gt;<i>      &gt; &gt; &gt; printf(&quot;EL4102 succesfully set in OP STATE\n&quot;);
+</I>&gt;<i>      &gt; &gt; &gt; else
+</I>&gt;<i>      &gt; &gt; &gt; printf(&quot;\nfailed to set EL4102 in OP STATE!!\n&quot;);
+</I>&gt;<i>      &gt; &gt; &gt;
+</I>&gt;<i>      &gt; &gt; &gt; ///Modif
+</I>&gt;<i>      &gt; &gt; &gt; printf(&quot;Getting slave handler\n&quot;);
+</I>&gt;<i>      &gt; &gt; &gt; EtherCAT_SlaveHandler * sh_el2004 =
+</I>&gt;<i>      &gt; &gt; &gt; EM-&gt;get_slave_handler(0x03eb);
+</I>&gt;<i>      &gt; &gt; &gt; printf(&quot;Setting EL2004 to OP STATE\n&quot;);
+</I>&gt;<i>      &gt; &gt; &gt; if(sh_el2004-&gt;to_state(EC_OP_STATE))
+</I>&gt;<i>      &gt; &gt; &gt; printf(&quot;EL2004 succesfully set in OP STATE\n&quot;);
+</I>&gt;<i>      &gt; &gt; &gt; else
+</I>&gt;<i>      &gt; &gt; &gt; printf(&quot;\nFailed to set EL2004 in OP STATE\n&quot;);
+</I>&gt;<i>      &gt; &gt; &gt;
+</I>&gt;<i>      &gt; &gt; &gt; printf(&quot;Getting slave handler\n&quot;);
+</I>&gt;<i>      &gt; &gt; &gt; EtherCAT_SlaveHandler * sh_el1004 =
+</I>&gt;<i>      &gt; &gt; &gt; EM-&gt;get_slave_handler(0x03ec);
+</I>&gt;<i>      &gt; &gt; &gt; printf(&quot;Setting EL1004 to OP STATE\n&quot;);
+</I>&gt;<i>      &gt; &gt; &gt; if(sh_el1004-&gt;to_state(EC_OP_STATE))
+</I>&gt;<i>      &gt; &gt; &gt; printf(&quot;EL1004 succesfully set in OP STATE\n&quot;);
+</I>&gt;<i>      &gt; &gt; &gt; else
+</I>&gt;<i>      &gt; &gt; &gt; printf(&quot;\nFailed to set EL1004 in OP STATE\n&quot;);
+</I>&gt;<i>      &gt; &gt; &gt;
+</I>&gt;<i>      &gt; &gt; &gt; printf(&quot;Getting slave handler\n&quot;);
+</I>&gt;<i>      &gt; &gt; &gt; EtherCAT_SlaveHandler * sh_el6751 =
+</I>&gt;<i>      &gt; &gt; &gt; EM-&gt;get_slave_handler(0x03ed);
+</I>&gt;<i>      &gt; &gt; &gt; printf(&quot;Setting EL6751 to OP STATE\n&quot;);
+</I>&gt;<i>      &gt; &gt; &gt; if(sh_el6751-&gt;to_state(EC_OP_STATE))
+</I>&gt;<i>      &gt; &gt; &gt; printf(&quot;EL6751 succesfully set in OP STATE\n&quot;);
+</I>&gt;<i>      &gt; &gt; &gt; else
+</I>&gt;<i>      &gt; &gt; &gt; printf(&quot;\nFailed to set EL6751 in OP STATE\n&quot;);
+</I>&gt;<i>      &gt; &gt; &gt;
+</I>&gt;<i>      &gt; &gt; &gt;
+</I>&gt;<i>      &gt; &gt; &gt;
+</I>&gt;<i>      &gt; &gt; &gt; Please, If you have some ideas about this error let me know.
+</I>&gt;<i>      &gt; &gt; (Logical
+</I>&gt;<i>      &gt; &gt; &gt; Address...)
+</I>&gt;<i>      &gt; &gt; &gt;
+</I>&gt;<i>      &gt; &gt; &gt; Best regards,
+</I>&gt;<i>      &gt; &gt; &gt;
+</I>&gt;<i>      &gt; &gt; &gt; Said HARTI
+</I>&gt;<i>      &gt; &gt; &gt;
+</I>&gt;<i>      &gt; &gt; &gt;
+</I>&gt;<i>      &gt; &gt;
+</I>&gt;<i>      &gt;
+</I>&gt;<i>     ------------------------------------------------------------------------
+</I>&gt;<i>      &gt; &gt; &gt; Ne gardez plus qu'une seule adresse mail ! Copiez vos mails
+</I>&gt;<i>      &gt; &gt; &gt; vers Yahoo! Mail
+</I>&gt;<i>      &gt; &gt; &gt;
+</I>&gt;<i>      &gt; &gt; &gt;
+</I>&gt;<i>      &gt; &gt; &gt;
+</I>&gt;<i>      &gt; &gt;
+</I>&gt;<i>      &gt;
+</I>&gt;<i>     ------------------------------------------------------------------------
+</I>&gt;<i>      &gt; &gt; &gt;
+</I>&gt;<i>      &gt; &gt; &gt; _______________________________________________
+</I>&gt;<i>      &gt; &gt; &gt; Ethercatmaster-users mailing list
+</I>&gt;<i>      &gt; &gt; &gt; <A HREF="https://lists.berlios.de/mailman/listinfo/ethercatmaster-devel">Ethercatmaster-users at lists.berlios.de</A>
+</I>&gt;<i>      &gt; &gt; &gt; <A HREF="https://lists.berlios.de/mailman/listinfo/ethercatmaster-users">https://lists.berlios.de/mailman/listinfo/ethercatmaster-users</A>
+</I>&gt;<i>      &gt; &gt;
+</I>&gt;<i>      &gt; &gt;
+</I>&gt;<i>      &gt; &gt;
+</I>&gt;<i>      &gt;
+</I>&gt;<i>     ------------------------------------------------------------------------
+</I>&gt;<i>      &gt; &gt; Stockage illimit&#233; de vos mails avec Yahoo! Mail. Changez
+</I>&gt;<i>      &gt; aujourd'hui de
+</I>&gt;<i>      &gt; &gt; mail !
+</I>&gt;<i>      &gt;
+</I>&gt;<i>      &gt;
+</I>&gt;<i>      &gt;
+</I>&gt;<i>     ------------------------------------------------------------------------
+</I>&gt;<i>      &gt; Stockage illimit&#233; de vos mails avec Yahoo! Mail. Changez
+</I>&gt;<i>     aujourd'hui de
+</I>&gt;<i>      &gt; mail !
+</I>&gt;<i> 
+</I>&gt;<i> 
+</I>&gt;<i> ------------------------------------------------------------------------
+</I>&gt;<i> Stockage illimit&#233; de vos mails avec Yahoo! Mail. Changez aujourd'hui de 
+</I>&gt;<i> mail ! &lt;<A HREF="http://fr.promotions.yahoo.com/mail/nouveau_yahoomail2.html">http://fr.promotions.yahoo.com/mail/nouveau_yahoomail2.html</A>&gt;
+</I>
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000023.html">[Ethercatmaster-devel] non-persistent outputs EML
+</A></li>
+	<LI>Next message: <A HREF="000025.html">[Ethercatmaster-devel] [ECOS] Project ideas for graduate course	(fwd)
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#24">[ date ]</a>
+              <a href="thread.html#24">[ thread ]</a>
+              <a href="subject.html#24">[ subject ]</a>
+              <a href="author.html#24">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/ethercatmaster-devel">More information about the Ethercatmaster-devel
+mailing list</a><br>
+</body></html>

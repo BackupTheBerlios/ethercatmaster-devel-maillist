@@ -1,0 +1,104 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Ethercatmaster-devel] [PATCH] Cleanup RTnet port
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/ethercatmaster-devel/2007-February/index.html" >
+   <LINK REL="made" HREF="mailto:ethercatmaster-devel%40lists.berlios.de?Subject=Re%3A%20%5BEthercatmaster-devel%5D%20%5BPATCH%5D%20Cleanup%20RTnet%20port&In-Reply-To=%3CPine.LNX.4.64.0702221116340.10576%40ampere.labo01.fmtc.be%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000008.html">
+   <LINK REL="Next"  HREF="000015.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Ethercatmaster-devel] [PATCH] Cleanup RTnet port</H1>
+    <B>Klaas Gadeyne</B> 
+    <A HREF="mailto:ethercatmaster-devel%40lists.berlios.de?Subject=Re%3A%20%5BEthercatmaster-devel%5D%20%5BPATCH%5D%20Cleanup%20RTnet%20port&In-Reply-To=%3CPine.LNX.4.64.0702221116340.10576%40ampere.labo01.fmtc.be%3E"
+       TITLE="[Ethercatmaster-devel] [PATCH] Cleanup RTnet port">klaas.gadeyne at fmtc.be
+       </A><BR>
+    <I>Thu Feb 22 11:23:52 CET 2007</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000008.html">[Ethercatmaster-devel] [PATCH] Cleanup RTnet port
+</A></li>
+        <LI>Next message: <A HREF="000015.html">[Ethercatmaster-devel] [PATCH] Cleanup RTnet port
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#10">[ date ]</a>
+              <a href="thread.html#10">[ thread ]</a>
+              <a href="subject.html#10">[ subject ]</a>
+              <a href="author.html#10">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>On Thu, 22 Feb 2007, Jan Kiszka wrote:
+Hi Jan,
+
+&gt;<i> I just realised that you guys rolled out the RTnet port yesterday.
+</I>&gt;<i> Great! And here already comes the first patch. :)
+</I>
+How many hours are there in a day in Germany? :-) [*]
+
+&gt;<i> It's just cleanup work of the build process and the libeml dependencies.
+</I>&gt;<i> I noticed that you are using POSIX synchronisation for the library but
+</I>&gt;<i> native RTDM for the RTnet interface. I switched the code completely to
+</I>&gt;<i> POSIX and (hopefully) cleaned up the build process a bit. /Seems/ to be
+</I>&gt;<i> as it should, ie. the right symbols are placed into the binaries, but you
+</I>&gt;<i> should surely check twice.
+</I>
+Thx for the patch!  IIRC Tom had some problems when using the posix
+API, that's why he switched to the native skin.  But he can surely explain
+that better than me. 
+At the very least the &quot;using xeno-config&quot; part of your patch seems an improvement!
+
+&gt;<i> Further suggestions: make libeml a dynamic library (and link that one
+</I>&gt;<i> already against pthread_rt).
+</I>
+I haven't looked into it yet, but that should be a default option when
+configuring a cmake build I think.
+
+&gt;<i> Unless there is still some critical checkin pending, please feel free to
+</I>&gt;<i> announce your work on rtnet-users and xenomai-help/core. I will put some
+</I>&gt;<i> link on the RTnet homepage then.
+</I>
+I haven't had time to review Tom's code myself :-) + I want to verify we
+haven't broken anything regarding the ecos port first + build some
+extra security into the build system.
+
+&gt;<i> Now I wish I had some hardware to try... :)
+</I>
+Answer to [*]: There must be at least 96 if you want to loose time on
+real hardware :-)
+
+Thx,
+
+Klaas
+
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000008.html">[Ethercatmaster-devel] [PATCH] Cleanup RTnet port
+</A></li>
+	<LI>Next message: <A HREF="000015.html">[Ethercatmaster-devel] [PATCH] Cleanup RTnet port
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#10">[ date ]</a>
+              <a href="thread.html#10">[ thread ]</a>
+              <a href="subject.html#10">[ subject ]</a>
+              <a href="author.html#10">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/ethercatmaster-devel">More information about the Ethercatmaster-devel
+mailing list</a><br>
+</body></html>

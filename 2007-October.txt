@@ -1,0 +1,222 @@
+From rwatollenaar at gmail.com  Tue Oct  9 18:53:21 2007
+From: rwatollenaar at gmail.com (Roland Tollenaar)
+Date: Tue, 09 Oct 2007 18:53:21 +0200
+Subject: [Ethercatmaster-devel] help remove a bug please:
+Message-ID: <470BB201.6040307@gmail.com>
+
+Hi,
+
+For me, no matter which machine or which swtich I use, its not possible 
+run the ethrecat communication over a switch to look at the packages. 
+This is very inconvenient.
+
+I have discovered that EML fails in this part of the code when the 
+check_header function is called. I have tracked the starting point of 
+the error throught hte functions and have copied the reasoning into this 
+mail. Anyone familiar with EML might be able to determine form below 
+where the problem is most likely to be found. I also seem to have found 
+a recursive call of functions which seems dubious to me.
+
+TO make it easy i have pointed out in the snippets below where the 
+conditions fail.
+
+
+The first function to holler & complain is:
+
+bool
+EC_Ethernet_Frame::check_header(const unsigned char * a_buffer) const
+{
+   const unsigned char * dataptr = a_buffer;
+   EC_UINT frame_header;
+   dataptr=nw2host(dataptr,frame_header);
+
+   EC_UINT ec_command = 0x1000;
+   if (ec_command == (frame_header & ec_command))
+     {
+       EC_UINT bodylength = 0x07ff;
+       if (this->body_length() == (size_t) (frame_header & bodylength))
+	return true;
+	!!!!!!!!!!Fails on this condition!!!!!!!!!!!!!!!!
+     }
+   log(EC_LOG_ERROR, "building frame: checkheader failed\n");
+   return false;
+}
+
+
+Next falls out in
+
+static bool low_level_input(struct EtherCAT_Frame * frame, struct netif 
+* netif) {
+
+	unsigned char buffer_receive[MAX_ETH_DATA + HEADER_SIZE];
+	struct eth_msg *msg_received = (struct eth_msg *)buffer_receive;
+	//Receive message from socket
+	int sock = netif->socket_private;
+	int len_recv = recv(sock,buffer_receive,sizeof(buffer_receive),0);
+	if(len_recv < 0) {
+		//perror("low_level_input: Cannot receive msg: ");
+		//log(EC_LOG_ERROR, "low_level_input: Cannot receive msg: %d\n",len_recv);
+		return false;
+	}
+
+	if ( ((msg_received->ether_type[0]) != 0x88) || 
+(msg_received->ether_type[1]) != 0xA4) {
+		log(EC_LOG_ERROR, "low_level_input: No EtherCAT msg!\n");
+		return false;
+	}
+
+	// build Ethercat Frame
+	int succes = framebuild(frame,msg_received->data);
+	if (succes != 0){   !!!!!!!!!!!!!!Fails on this 
+condition!!!!!!!!!!!!!!!!!!!!!
+		// FIXME decent error handling here
+		log(EC_LOG_ERROR, "Roland low_level_input: framebuilding failed!\n");
+		return false;
+	}
+
+	return true;
+}
+
+which means we check framebuild:
+
+externC int framebuild(struct EtherCAT_Frame * frame,
+		       const unsigned char * buffer)
+{
+   return (frame->build(buffer));
+}
+
+which means EC_Frame::build returns -1....
+
+
+int
+EC_Frame::build(const unsigned char * a_buffer)
+{
+   if (this->check_header(a_buffer) == true) !!!!!!!!!!!!!!!!!Fails on 
+this condition!!!!!!!!!!!!!!!!!!!
+     {
+       a_buffer += ETHERCAT_ETHERNET_FRAME_HEADER_SIZE;
+       // a_buffer now points to the first telegram
+       // current telegram in frame, initialised to first telegram
+       EC_Telegram * tg = this->get_telegram();
+       while(tg) {
+	if ((a_buffer  = tg->build(a_buffer)) == NULL)
+	  return -1;
+	else
+	  tg = tg->next;
+       }
+       return 0;
+     }
+   else return -1;
+}
+
+thus we have to look at check_header....
+
+bool
+EC_Ethernet_Frame::check_header(const unsigned char * a_buffer) const
+{
+   const unsigned char * dataptr = a_buffer;
+   EC_UINT frame_header;
+   dataptr=nw2host(dataptr,frame_header);
+
+   EC_UINT ec_command = 0x1000;
+   if (ec_command == (frame_header & ec_command))
+     {
+       EC_UINT bodylength = 0x07ff;
+       if (this->body_length() == (size_t) (frame_header & 
+bodylength))!!!!!!!!!!!!!!!!!Fails on this condition!!!!!!!!!!!!!!!!!!!!
+	return true;
+       else
+	log(EC_LOG_ERROR, "Roland: checkheader failed on faulty body length\n");	
+     }
+   log(EC_LOG_ERROR, "building frame: checkheader failed\n");
+   return false;
+	
+}
+
+so we look at body_length().....phew....
+
+size_t
+EC_Frame::body_length(void) const
+{
+   int result = 0;
+   if (m_telegram)
+     {
+       EC_Telegram * tg = m_telegram;
+       result += tg->length();
+       while (tg->next != NULL)
+	{
+	  tg = tg->next;
+	  result += tg->length();
+	}
+     }
+     else
+	log(EC_LOG_ERROR, "Roland: m_telegram false in 
+EC_Frame::body_length\n");!!!!!!!!!!This message never shows!!!!!!!!!!!!!	
+   return result;
+}
+
+which leaves us to look at EC_Telegram::length() and nw2host()
+
+length implemented as such:
+
+size_t length(void) const  { return header_length() + body_length();}
+
+  virtual size_t          header_length(void)const { return 
+ETHERCAT_TELEGRAM_HEADER_SIZE; }
+which seems pretty constant to me, and
+
+size_t
+EC_Frame::body_length(void) const
+{
+   int result = 0;
+   if (m_telegram)
+     {
+       EC_Telegram * tg = m_telegram;
+       result += tg->length();
+       while (tg->next != NULL)
+	{
+	  tg = tg->next;
+	  result += tg->length();
+	}
+     }
+     else
+	log(EC_LOG_ERROR, "Roland: m_telegram false in EC_Frame::body_length\n");
+   return result;
+}
+
+which we have seen before. In fact this looks pretty recursive to me and 
+not good style??
+
+
+  Whatever the case its either this length() function returning garbage or
+
+nw2host is messing up on giving frame_header content and shifting the 
+pointer to the buffer
+
+inline const unsigned char * nw2host(const unsigned char * a_data, 
+EC_UINT& a_value) {
+   cyg_uint16 tmp;
+   memcpy(&tmp, a_data, sizeof(tmp));
+   tmp = CYG_LE16_TO_CPU(tmp);
+
+   a_value = static_cast<EC_UINT>(tmp);
+   return a_data + sizeof(a_value);
+}
+
+BUt I cannot see this happening.
+
+Any tips?
+
+
+Regards,
+
+Roland
+
+
+
+
+
+
+
+
+

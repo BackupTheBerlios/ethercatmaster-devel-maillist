@@ -1,0 +1,116 @@
+From klaas.gadeyne at fmtc.be  Tue May 23 18:07:54 2006
+From: klaas.gadeyne at fmtc.be (Klaas Gadeyne)
+Date: Tue, 23 May 2006 18:07:54 +0200 (CEST)
+Subject: [Ethercatmaster-devel] Re: EML
+In-Reply-To: <5448984682E7954C9BFF27F747A9C6CA037003@dolphin.TIGRIS.local>
+References: <5448984682E7954C9BFF27F747A9C6CA037003@dolphin.TIGRIS.local>
+Message-ID: <Pine.LNX.4.64.0605231805010.30959@ampere.labo01.fmtc.be>
+
+> I've done some porting of the EML to linux in the last days. I had to
+> change some code (very little) in the C++ parts to make my compiler
+> accept it. Are you interested in a patch of these changes?
+
+We certainly are.  An ideal opportunity to put some content on the
+developers ML, it seems :-)
+
+regards,
+
+Klaas
+
+
+
+
+From Maximilian.von.Schwerin at tigris.de  Wed May 24 11:25:19 2006
+From: Maximilian.von.Schwerin at tigris.de (Maximilian Schwerin)
+Date: Wed, 24 May 2006 11:25:19 +0200
+Subject: [Ethercatmaster-devel] patches against EML-0.1
+Message-ID: <5448984682E7954C9BFF27F747A9C6CA037006@dolphin.TIGRIS.local>
+
+Hi all,
+
+I've attached two patches.
+
+The first patch contains changes I had to make to make the linux c++
+compiler accept the code. I also removed ecos specific includes in one
+or two places.
+
+In a second patch I did some refactoring of the code (very little) and
+changed some of the log messages.
+
+Cheers, Maximilian
+_____________________________________________________________
+
+ Maximilian Schwerin                    mailto:mvs at tigris.de
+ Tigris Elektronik GmbH                 http://www.tigris.de
+ Fuggerstrasse 23                      Tel: +49-30-301048-30
+ 10777 Berlin, Germany                 Fax: +49-30-301048-59
+_____________________________________________________________
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: 2005-06-24-tigris-patches.tar.gz
+Type: application/x-gzip
+Size: 8652 bytes
+Desc: 2005-06-24-tigris-patches.tar.gz
+URL: <https://lists.berlios.de/pipermail/ethercatmaster-devel/attachments/20060524/3ccc7f14/attachment.bin>
+
+From klaas.gadeyne at fmtc.be  Mon May 29 08:35:56 2006
+From: klaas.gadeyne at fmtc.be (Klaas Gadeyne)
+Date: Mon, 29 May 2006 08:35:56 +0200 (CEST)
+Subject: [Ethercatmaster-devel] patches against EML-0.1
+In-Reply-To: <5448984682E7954C9BFF27F747A9C6CA037006@dolphin.TIGRIS.local>
+References: <5448984682E7954C9BFF27F747A9C6CA037006@dolphin.TIGRIS.local>
+Message-ID: <Pine.LNX.4.64.0605290834520.16882@ampere.labo01.fmtc.be>
+
+> Hi all,
+>
+> I've attached two patches.
+>
+> The first patch contains changes I had to make to make the linux c++
+> compiler accept the code. I also removed ecos specific includes in one
+> or two places.
+>
+> In a second patch I did some refactoring of the code (very little) and
+> changed some of the log messages.
+
+Hi Maximilian,
+
+I'll have a look at the patches ASAP (but things are a little bit too
+busy at this very moment :(
+
+thx for submitting them
+
+regards,
+
+Klaas
+
+
+From Maximilian.von.Schwerin at tigris.de  Wed May 31 12:36:41 2006
+From: Maximilian.von.Schwerin at tigris.de (Maximilian Schwerin)
+Date: Wed, 31 May 2006 12:36:41 +0200
+Subject: [Ethercatmaster-devel] Patches
+Message-ID: <5448984682E7954C9BFF27F747A9C6CA03700A@dolphin.TIGRIS.local>
+
+Hi,
+
+I found some errors in the patches I sent. I've attached a corrected
+version of the linux-compiler-fix patch again.
+
+Better forget about the second patch. I've changed quite a bit of the
+code in the meantime so that it's not really relevant anymore.
+
+Cheers, Maximilian
+_____________________________________________________________
+
+ Maximilian Schwerin                    mailto:mvs at tigris.de
+ Tigris Elektronik GmbH                 http://www.tigris.de
+ Fuggerstrasse 23                      Tel: +49-30-301048-30
+ 10777 Berlin, Germany                 Fax: +49-30-301048-59
+_____________________________________________________________
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: 2006-05-24-linux-compiler-fix.corrected.patch.gz
+Type: application/x-gzip
+Size: 5197 bytes
+Desc: 2006-05-24-linux-compiler-fix.corrected.patch.gz
+URL: <https://lists.berlios.de/pipermail/ethercatmaster-devel/attachments/20060531/245c178e/attachment.bin>
+

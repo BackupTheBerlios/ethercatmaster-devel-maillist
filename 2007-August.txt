@@ -1,0 +1,212 @@
+From klaas.gadeyne at fmtc.be  Thu Aug 16 10:30:41 2007
+From: klaas.gadeyne at fmtc.be (Klaas Gadeyne)
+Date: Thu, 16 Aug 2007 10:30:41 +0200 (CEST)
+Subject: [Ethercatmaster-devel] [Ethercatmaster-users] [Xenomai-help]
+ EML conflict with RTCAN? low_level_input framebuilding failed.
+In-Reply-To: <46C1EE69.3020301@gmail.com>
+References: <46C02829.9020009@gmail.com> <46C04384.4030805@grandegger.com>
+	<46C05180.5090302@gmail.com> <46C05690.2010108@grandegger.com>
+	<46C063E0.1010809@gmail.com> <46C07005.8000504@web.de>
+	<46C1B498.8060600@gmail.com>
+	<Pine.LNX.4.64.0708141629570.18303@ampere.labo01.fmtc.be>
+	<46C1EE69.3020301@gmail.com>
+Message-ID: <Pine.LNX.4.64.0708160956010.18303@ampere.labo01.fmtc.be>
+
+On Tue, 14 Aug 2007, Roland Tollenaar wrote:
+[Again dropping cc:'s for EML specific issues, and adding eml-devel]
+
+[...]
+>> What do you mean with "inputs functioning perfectly"?
+>
+> The digital inputs are packed into the frame as are the digital outputs
+> and analog output process data. The outputs function as they should but
+> the warning complains mainly about the retrieving part of the ethercat
+> cycle. Hence my comment that the digital inputs also function as they
+> should that is to say the data arrives correctly and uncorrupted. AFAI
+> understand from ETG the index is not changed by the ESC's so I would
+> expect the check always return true. But even if it does not what does
+> that mean? Can it mean that EML is losing some frames that have been
+> transmitted? I.e. the index is incremented with every transmit and the
+> message with the same index is expected on the next read but instead it
+> is only getting one later? If so, what could cause this?
+
+Probably something like this happens: One frame somehow gets lost
+(wireshark should confirm this), the next txandrx happens before the
+timeout of the first txandrx, and the first txandrx accepts a message
+that it shouldn't be accepting.
+
+HOWEVER, if you look at the txandrx code I copy pasted in a previous
+mail (berlios seems to be down), you can see that this shouldn't be
+happening since Tom apparently uses a _global_ lock for this, unless I
+overlook something (which is probably the case)...
+
+So, given the implementation with the global lock (one can discuss
+whether it's optimal, feel free to provide a patch) I don't understand
+how this happens.
+
+////////////////////////////////////////////////////////////////////////
+// For thread safety: txandrx() can be called from multiple threads...
+static pthread_mutex_t txandrx_mut;
+
+static bool ec_rtdm_txandrx(struct EtherCAT_Frame * frame, struct
+netif * netif) {
+         int tries = 0;
+         while (tries < MAX_TRIES_TX) {
+                 pthread_mutex_lock (&txandrx_mut);
+                 if (low_level_output(frame,netif)){
+                         if (low_level_input(frame,netif)){
+                                 pthread_mutex_unlock(&txandrx_mut);
+                                 return true;
+                         }
+                         else{
+                                 //log(EC_LOG_ERROR,
+ 				"low_level_txandrx: receiving
+ 				failed\n");
+                                 pthread_mutex_unlock(&txandrx_mut);
+                         }
+                 }
+                 else{
+                         //log(EC_LOG_ERROR, "low_level_txandrx:
+ 			sending failed\n");
+                         pthread_mutex_unlock(&txandrx_mut);
+                 }
+                 tries++;
+         }
+         log(EC_LOG_FATAL, "low_level_txandrx: failed: MAX_TRIES_TX:
+ 	Giving up\n");
+         return false;
+}
+///////////////////////////////////////////////////////////////////////
+
+Unless of course (thinking doesn't hurt), I think other problems could occur
+with this implementation.
+
+[I've only had a short look at Tom's code, so feel free to correct
+me...]
+   Since the locking of the mutex happens inside the while loop, this
+   construction seems not particularly threadsafe.  If I look at the
+   implementation of low_level_input(), the receiving part on the raw
+   socket is implemented like this:
+
+   int len_recv = recv(sock,buffer_receive,sizeof(buffer_receive),0);
+
+   Looking at the top of the driver file, the socket timeout is set to
+
+// Maximum tries to send and receive a message
+#define MAX_TRIES_TX 10
+// Timeout for receiving and transmitting messages is 10ms
+#define TIMEOUT_NSEC 1000 * 100
+
+   [I think s/10ms/100us/g]
+
+   while you're are trying to send at a 1ms period.  So IMO this can
+   cause race conditions...
+
+   - Thread sends message, frame somehow gets lost, but timeout is set to
+   100 us
+   - After 1 ms, thread is woken up again, tries to send msg (should
+   fail since mutex is locked).
+
+   I can't predict exactly what will be happening, but by just looking
+   at the code, I would say, this ain't gonna work...
+
+Does your problem also occur, if your PD thread only sends at a 2ms
+rate (or if you decrease MAX_TRIES_TX to 5 for instance)
+
+[...]
+> What I did was simply put a printf line into EML to output index and
+> m_idx to screen. So unfortunately this does not tell us where the shift
+> is acquired.
+
+Not a plain simple printf() I might hope?
+
+Klaas
+
+
+From klaas.gadeyne at fmtc.be  Thu Aug 16 11:23:20 2007
+From: klaas.gadeyne at fmtc.be (Klaas Gadeyne)
+Date: Thu, 16 Aug 2007 11:23:20 +0200 (CEST)
+Subject: [Ethercatmaster-devel] [Ethercatmaster-users] [Xenomai-help]
+ EML conflict with RTCAN? low_level_input framebuilding failed.
+In-Reply-To: <46C4091C.1080704@web.de>
+References: <46C02829.9020009@gmail.com> <46C04384.4030805@grandegger.com>
+	<46C05180.5090302@gmail.com> <46C05690.2010108@grandegger.com>
+	<46C063E0.1010809@gmail.com> <46C07005.8000504@web.de>
+	<46C1B498.8060600@gmail.com>
+	<Pine.LNX.4.64.0708141629570.18303@ampere.labo01.fmtc.be>
+	<46C1EE69.3020301@gmail.com> <46C1FFDA.4070709@web.de>
+	<Pine.LNX.4.64.0708160951040.18303@ampere.labo01.fmtc.be>
+	<46C4091C.1080704@web.de>
+Message-ID: <Pine.LNX.4.64.0708161101590.18303@ampere.labo01.fmtc.be>
+
+On Thu, 16 Aug 2007, Jan Kiszka wrote:
+> Klaas Gadeyne wrote:
+>> On Tue, 14 Aug 2007, Jan Kiszka wrote:
+>>> Roland Tollenaar wrote:
+>> [dropping some cc:'s]
+>>>>> How many threads do you have sending process data, and what are there
+>>>>> priorities? (/proc/xenomai/sched IIRC)
+>>>> I have 3 rt tasks running. Only one sends and receives process data. The
+>>>> priorities are:
+>>>> rt_task1 99
+>>> Check the /proc output again, there should be also RTnet's stack manager
+>>> at prio 98. Maybe that is too low for your scenario and causes prio
+>>> inversions (note: every incoming Ethernet frame goes through its hands).
+>>> Try lowering the prio of your rt_task1 beneath 98.
+>>
+>> Indeed (see the lowlevel send code I copy/pasted yesterday to
+>> understand why), that should be documented somewhere!  Your
+>> application threads should have a lower priority than RTnet's stack
+>> manager.  Consider this lack of documentation as an EML bug and
+>> provide a patch...
+>
+> Klaas, does this mean that the EML stack has implicit ordering
+> requirements between RTnet's RX task and applications threads in
+> multi-user scenarios? I'm asking as this could easily fall apart again
+> on SMP. Is there some lock lacking?
+
+[Tom, correct me if I'm wrong here]
+
+I haven't sorted it out yet, but it shouldn't.  IIRC Tom's original
+implementation didn't contain the while loop in the txandrx call
+(grrrrrr, berlios still down).  Again, IIRC, he added it, because
+sometimes, during initialization (typically not done in a periodic
+thread), when frames got lost, EML just gave up completely.  Now,
+since this happened at a couple of places, he decided to put the while
+loop in the lower level txandrx code, instead of in several places in
+the higher level layers during initialization.
+
+Now, as explained in my previous message, when running this code in a
+periodic thread (when all stuff is in its operational state), things
+might go wrong when a message arrives after the timeout [*] due to
+a) You can have a periodic thread with a period smaller than the
+maxtries cycle it takes, which messes things up.
+b) the fact that the lock is in (and not around) the while loop.
+
+It seems to me (but I cannot conclude this 100% sure from what Roland
+reports) that somehow this scenario occurs:
+1/ tries = 0 A first frame is sent out
+2/ Somehow, this frame gets delayed more than the timeout [again *]
+3/ tries = 1 A second frame (identical to the first one) is sent out
+4/ The first frame has arrived back meanwhile and is captured by the
+    recv call (no error since they are identical), all seems well.
+5/ tries = 0 A third frame (different from the first two) is sent out
+6/ The recv call get the second frame back, detects the index is
+    wrong, and drops it.
+
+So, ATM I don't think we need another lock, but we (or someone else :)
+should get the above behaviour fixed first.
+Somehow (I think this is rather related to a) above) this gets solved
+(I noticed that my original reasoning about the priorities was not
+correct since I hadn't seen the timeout on the socket then) by
+altering the priorities, but I think that is not the basic problem here.
+
+Roland, what happens if you simply remove the while loop (make sure to
+put EtherCAT logging to verbose mode)?
+
+[*] Somebody should reread the docu in the spec about transmission
+rates/times...
+
+Klaas
+
+

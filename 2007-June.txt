@@ -1,0 +1,120 @@
+From klaas.gadeyne at fmtc.be  Wed Jun 27 10:29:54 2007
+From: klaas.gadeyne at fmtc.be (Klaas Gadeyne)
+Date: Wed, 27 Jun 2007 10:29:54 +0200 (CEST)
+Subject: [Ethercatmaster-devel] [Ethercatmaster-users] usage of an xml
+	config file
+In-Reply-To: <46821FE8.2090805@free.fr>
+References: <bc4264770706160243u79190decte50a9aa4c8212ae3@mail.gmail.com>
+	<4673DA65.1030903@skynet.be> <46821FE8.2090805@free.fr>
+Message-ID: <Pine.LNX.4.64.0706271005300.22622@ampere.labo01.fmtc.be>
+
+On Wed, 27 Jun 2007, St?phane ANCELOT wrote:
+Hi Stephane,
+
+[cc: and further follow-up to developers-ML]
+
+> It looks like it is possible to create the master setup using the xml
+> file provided by beckhof setup tool . I may develop a parser for
+> ethercat master.
+
+Great news!
+
+> regarding the implementation of an xml parser for it, do you have some
+> preference either for using a c program parsing the xml file and able to
+> create on the fly the network setup in the C ethercat  master
+[1]
+
+> or a parser that generates an obj code that you link with ethercat master ?
+[2]
+
+I see both advantages and disadvantages to both solutions
+
+[1] PRO: would allow you to reduce the size of the resulting binary for
+     deeply embedded masters by just including the necessary
+     definitions (and e.g. keep the necessary xml-files in flash)
+
+[2] PRO: it would ofcourse be nice if EML comes with support for a lot
+     of devices out of the box, especially for those (RT-)linux users
+     having few constraints in terms of memory space.
+     CON: Given the fact that there are quite some xml-files out there
+     (see e.g.~a recent post of Roland about a different revision
+     number for a specific module), it might prove hard to provide the
+     user with object code that just works for (almost) every single
+     device.
+
+There might be other points to.
+
+Do you already have an idea which "parser-helper" library to use?
+
+FWIW, for the RTT part of orocos project, both the xerces-c library
+and the tinyxml library (included in the orocos source code) were
+used for parsing orocos "property files". 
+See e.g. <http://osdir.com/ml/science.robotics.orocos.devel/2006-08/msg00248.html>
+Both have pro's and cons (mainly size vs. functionality).
+
+Considering the fact that EML also has an eCos port, and the xerces-c
+parser requires support for exceptions not present in the standard
+toolchains available for eCos (see
+e.g.~<http://zylin.com/pipermail/zylin-discuss_zylin.com/2006-October/000317.html>)
+my first choice would be the tinyXML parser. [*]
+
+best regards,
+
+Klaas
+
+[*] Note that I finally succeeded using xerces-c for orocos-on-ecos,
+     but it really is a pain in the ass.
+
+From sancelot at free.fr  Wed Jun 27 12:58:48 2007
+From: sancelot at free.fr (=?ISO-8859-1?Q?St=E9phane_ANCELOT?=)
+Date: Wed, 27 Jun 2007 10:58:48 +0000
+Subject: [Ethercatmaster-devel] [Ethercatmaster-users] usage of an xml
+	config file
+In-Reply-To: <Pine.LNX.4.64.0706271005300.22622@ampere.labo01.fmtc.be>
+References: <bc4264770706160243u79190decte50a9aa4c8212ae3@mail.gmail.com>
+	<4673DA65.1030903@skynet.be> <46821FE8.2090805@free.fr>
+	<Pine.LNX.4.64.0706271005300.22622@ampere.labo01.fmtc.be>
+Message-ID: <468242E8.1050107@free.fr>
+
+Hi,
+>Klaas Gadeyne a ?crit :
+> On Wed, 27 Jun 2007, St?phane ANCELOT wrote:
+> Hi Stephane,
+.
+.
+.
+> 
+> There might be other points to.
+> 
+> Do you already have an idea which "parser-helper" library to use?
+> 
+
+No,not at the moment,  however, in term of facility I know it will be
+fast for me to develop either first a python xml parser or an xslt that
+generates C code to integrate. I have had a look at tinyxml it does not
+seem more complicated to use.
+
+Best Regards
+Steph
+> FWIW, for the RTT part of orocos project, both the xerces-c library
+> and the tinyxml library (included in the orocos source code) were
+> used for parsing orocos "property files". See e.g.
+> <http://osdir.com/ml/science.robotics.orocos.devel/2006-08/msg00248.html>
+> Both have pro's and cons (mainly size vs. functionality).
+> 
+> Considering the fact that EML also has an eCos port, and the xerces-c
+> parser requires support for exceptions not present in the standard
+> toolchains available for eCos (see
+> e.g.~<http://zylin.com/pipermail/zylin-discuss_zylin.com/2006-October/000317.html>)
+> 
+> my first choice would be the tinyXML parser. [*]
+> 
+> best regards,
+> 
+> Klaas
+> 
+> [*] Note that I finally succeeded using xerces-c for orocos-on-ecos,
+>     but it really is a pain in the ass.
+
+
+

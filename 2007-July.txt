@@ -1,0 +1,616 @@
+From rwatollenaar at gmail.com  Mon Jul 30 13:01:23 2007
+From: rwatollenaar at gmail.com (Roland Tollenaar)
+Date: Mon, 30 Jul 2007 13:01:23 +0200
+Subject: [Ethercatmaster-devel] non-persistent outputs EML
+Message-ID: <46ADC503.2050700@gmail.com>
+
+Hi,
+
+This email in on the users and developers list since it seems like it is 
+time to look at the EML code.
+
+The frames between twin cat and eml differ substantially, I want to try 
+to hack the eml frame to look like the twincat frame just to see what it 
+does. Then by changing (hardcoding) the eml frame byte by byte find out 
+which byte in the frame is instrumental in the persistent/non-persistent 
+behaviour.
+
+Could one of the developers please tell me in which file of the project 
+I can best substitute the bytes before the frame is sent?
+
+Kind regards,
+
+Roland
+
+
+From rwatollenaar at gmail.com  Mon Jul 30 17:54:17 2007
+From: rwatollenaar at gmail.com (Roland Tollenaar)
+Date: Mon, 30 Jul 2007 17:54:17 +0200
+Subject: [Ethercatmaster-devel] RE : Re: RE : OFF LIST Re: RE : Re:
+ [Ethercatmaster-users] EL6751 parameters !
+In-Reply-To: <987908.88371.qm@web37306.mail.mud.yahoo.com>
+References: <987908.88371.qm@web37306.mail.mud.yahoo.com>
+Message-ID: <46AE09A9.1080102@gmail.com>
+
+Hi Said,
+
+I think it will. For one thing we will know how the frames get assembled 
+and we will discover which byte affects this particular behavior.
+
+Roland
+
+said harti wrote:
+> OK rooland, iam going to look at this idea as soon as possible, but i 
+> don't tkink that will change a lot of things...
+> 
+> Regards,
+> 
+> Said
+> 
+> */Roland Tollenaar <rwatollenaar at gmail.com>/* a ?crit :
+> 
+>     same here. What we can try which is next on my list is to substitute
+>     the
+>     bytes (hard coded) into the EML library (except for the process
+>     data) so
+>     that we can find out step by step which byte affects this behaviour. We
+>     know that the EML frame and the twincat frame differ, the TC frame
+>     works
+>     whereas the EML frame does not. We can I hope substitute each byte hard
+>     coded that is not process data so that the frame looks like the twincat
+>     frame. Then see what happens.
+> 
+>     have you tried this? I am short time so will only be able to work on
+>     this at small increments. Why don;t you try it? I have posted an email
+>     tot he ethercat development list to find out which file to access.
+> 
+>     Regards,
+> 
+>     Roland
+> 
+>     said harti wrote:
+>      >
+>      > Thanks a lot Rolland for all documentations,
+>      > I am sorry, i don't have other documentation, i have just the same
+>      > documentation access like you, on ETG members aera
+>      >
+>      > For the moment, i am on the stand by, my project don't
+>     progress...i am
+>      > desesperate...
+>      >
+>      > Regards,
+>      >
+>      > Said
+>      >
+>      >
+>      > */Roland Tollenaar /* a ?crit :
+>      >
+>      > Hi Said,
+>      >
+>      > I have attached all the documentation I have. This is form the
+>     memebers
+>      > part of the ETG I have complained that I don;t htink it is enough
+>     so if
+>      > you have better documentation I would be grateful if you can forward
+>      > that to me. Otherwise I hope that this documentation help you on
+>     a bit.
+>      >
+>      > kind regards,
+>      >
+>      > Roland
+>      >
+>      > said harti wrote:
+>      > > Hi Rolland,
+>      > >
+>      > > Yes, i hope that the list will be more populare as soon as
+>      > possible in
+>      > > order to resolve together all problems...
+>      > >
+>      > > I have opted to CoE because i thinked that the CANopen process is
+>      > > implemented on EML? :(
+>      > >
+>      > > I don't have documentation, this is the problem :(
+>      > > I have just some indication in concerne the EtherCAT Master
+>      > sample code
+>      > > (ET9200) but, this master turn on Windows, and it's implemented
+>      > > differently then EML.
+>      > >
+>      > > So, I hope that Tom and Klaas will be able to helps me and gives
+>      > me some
+>      > > indications to set EL6751 to OP STATE at the first time, and
+>      > after that,
+>      > > andestand the communication process in order to excahnge data
+>      > between
+>      > > EtherCAT and CANopen via the EL6751.
+>      > >
+>      > > Thanks a lot for you help, it's very nice :)
+>      > >
+>      > > Regards
+>      > >
+>      > > Said
+>      > >
+>      > > */Roland Tollenaar /* a ?crit :
+>      > >
+>      > > Hi Said,
+>      > >
+>      > > Although I am very interested in CoE and could use it in my current
+>      > > project I have opted to run the CANOpen over another interface to
+>      > avoid
+>      > > the complication with EML. This list is not yet very active (I
+>     don't
+>      > > doubt that ti should become quite popular in the future) so
+>      > perhaps its
+>      > > an idea to approach ETG for at least the basic manner in which CAN
+>      > > rides
+>      > > in Ethercat frames?
+>      > >
+>      > > What documentation have you got on ethercat? Have you been in
+>     contact
+>      > > with ETG?
+>      > >
+>      > > I am sorry I cannot help otherwise.
+>      > >
+>      > > Regards,
+>      > >
+>      > > Roland.
+>      > >
+>      > >
+>      > > said harti wrote:
+>      > > > Hi,
+>      > > >
+>      > > > klaas has tell me that i must implement CoE in order to
+>      > > communicate with
+>      > > > CANopen nodes. I am looking hardly for this in order to define
+>      > > steps and
+>      > > > works to do.
+>      > > >
+>      > > > But first, i try to set the EL6751 to OP STATE like others
+>      > > modules, but
+>      > > > i get this error :
+>      > > >
+>      > > > ...
+>      > > > Getting slave handler
+>      > > > Setting EL1004 to OP STATE
+>      > > > EL1004 succesfully set in OP STATE
+>      > > > Getting slave handler
+>      > > > Setting EL6751 to OP STATE
+>      > > > EC_ESM_Ops::set_state() Warning: State trans. failed (try 0),
+>      > > desired=2
+>      > > > status=1
+>      > > > EC_ESM_Ops::set_state() Warning: State trans. failed (try 1),
+>      > > desired=2
+>      > > > status=1
+>      > > > EC_ESM_Ops::set_state() Warning: State trans. failed (try 2),
+>      > > desired=2
+>      > > > status=1
+>      > > > EC_ESM_Ops::set_state() Warning: State trans. failed (try 3),
+>      > > desired=2
+>      > > > status=1
+>      > > >
+>      > > > EC_ESM_Ops::set_state() Warning: State trans. failed (try 0),
+>      > > desired=4
+>      > > > status=2
+>      > > > EC_ESM_Ops::set_state() Warning: State trans. failed (try 1),
+>      > > desired=4
+>      > > > status=2
+>      > > > EC_ESM_Ops::set_state() Warning: State trans. failed (try 2),
+>      > > desired=4
+>      > > > status=2
+>      > > > EC_ESM_Ops::set_state() Warning: State trans. failed (try 3),
+>      > > desired=4
+>      > > > status=2
+>      > > > EC_ESM_Ops::set_state() Warning: State trans. failed (try 4),
+>      > > desired=4
+>      > > > status=2
+>      > > > EC_ESM_Ops::set_state() Warning: State trans. failed (try 5),
+>      > > desired=4
+>      > > > status=2
+>      > > > EC_ESM_Ops::set_state() Warning: State trans. failed (try 6),
+>      > > desired=4
+>      > > > status=2
+>      > > > EC_ESM_Ops::set_state() Warning: State trans. failed (try 7),
+>      > > desired=4
+>      > > > status=2
+>      > > > EC_ESM_Ops::set_state() Warning: State trans. failed (try 8),
+>      > > desired=4
+>      > > > status=2
+>      > > > EC_ESM_Ops::set_state() Warning: State trans. failed (try 9),
+>      > > desired=4
+>      > > > status=2
+>      > > >
+>      > > > EC_ESM_Ops::set_state() failed to set state after 10 tries
+>      > > >
+>      > > > Failed to set EL6751 in OP STATE
+>      > > > AL initializing
+>      > > >
+>      > > > Test: Set AO Channel 1 to 5v :
+>      > > >
+>      > > > Test done.
+>      > > >
+>      > > > this is my master_test config :
+>      > > >
+>      > > > ...
+>      > > > #include
+>      > > > #include
+>      > > >
+>      > > > struct netif *ni;
+>      > > >
+>      > > >
+>      > > > ///SlaveConfig EK1100
+>      > > > EtherCAT_FMMU_Config fmmu_config_EK1100(0);
+>      > > > EtherCAT_PD_Config pd_config_EK1100(0);
+>      > > > EtherCAT_SlaveConfig
+>      > > >
+>      > >
+>      >
+>     EC_EK1100(0x044c2c52,0x00010000,0x03e9,&fmmu_config_EK1100,&pd_config_EK1100);
+>      > > >
+>      > > > ///SlaveConfig EL4102
+>      > > >
+>      > > > EtherCAT_FMMU_Config fmmu_config_EL4102(2);///arg=number of
+>      > > FMMU's.Some
+>      > > > modules take more than one if e.g. they have in and
+>      > > outputs.///not sure
+>      > > > what this is doing (Seems to be actual fmmu config which gets
+>      > > linked to
+>      > > > the handle created above)
+>      > > >
+>      > > > EC_FMMU
+>      > > >
+>      > >
+>      >
+>     fmmu0_EL4102(0x00080000,0x0001,0x00,0x00,0x080D,0x00,true,false,true);
+>      > > > EC_FMMU
+>      > > >
+>      > >
+>      >
+>     fmmu1_EL4102(0x00010000,0x0004,0x00,0x07,0x1000,0x00,false,true,true);
+>      > > >
+>      > > > EC_SyncMan
+>      > > >
+>      > >
+>      >
+>     syncman_mbx0_EL4102(0x1800,246,EC_QUEUED,EC_WRITTEN_FROM_MASTER,true,false,false,false,false,false,EC_FIRST_BUFFER,true);
+>      > > > EC_SyncMan
+>      > > >
+>      > >
+>      >
+>     syncman_mbx1_EL4102(0x18f6,246,EC_QUEUED,EC_READ_FROM_MASTER,true,false,false,false,false,false,EC_FIRST_BUFFER,true);
+>      > > > EtherCAT_MbxConfig mbx_conf_EL4102 = {syncman_mbx0_EL4102,
+>      > > > syncman_mbx1_EL4102};
+>      > > >
+>      > > > EtherCAT_PD_Config pd_config_EL4102(2);///argument=length
+>      > > > EC_SyncMan
+>      > > >
+>      > >
+>      >
+>     syncman0_EL4102(0x1000,4,EC_BUFFERED,EC_WRITTEN_FROM_MASTER,true,false,false,false,false,false,EC_FIRST_BUFFER,true);
+>      > > > EC_SyncMan
+>      > > >
+>      > >
+>      >
+>     syncman1_EL4102(0x1100,0,EC_BUFFERED,EC_READ_FROM_MASTER,true,false,false,false,false,false,EC_FIRST_BUFFER,true);
+>      > > >
+>      > > > ///compile the slave configuration
+>      > > >
+>      > > > EtherCAT_SlaveConfig
+>      > > >
+>      > >
+>      >
+>     EC_EL4102(0x10063052,0x00000000,0x03ea,&fmmu_config_EL4102,&pd_config_EL4102,&mbx_conf_EL4102);
+>      > > >
+>      > > >
+>      > > > ///SlaveConfig EL2004
+>      > > > EtherCAT_FMMU_Config fmmu_config_EL2004(1);
+>      > > >
+>      > > > EC_FMMU
+>      > > >
+>      > >
+>      >
+>     fmmu0_EL2004(0x00010004,0x0001,0x00,0x03,0x0F00,0x00,false,true,true);
+>      > > >
+>      > > > EtherCAT_PD_Config pd_config_EL2004(1);EC_SyncMan
+>      > > >
+>      > >
+>      >
+>     syncman0_EL2004(0x0F00,1,EC_QUEUED,EC_WRITTEN_FROM_MASTER,false,true,false,false,false,false,EC_FIRST_BUFFER,true);
+>      > > > EtherCAT_SlaveConfig
+>      > > >
+>      > >
+>      >
+>     EC_EL2004(0x7d43052,0x00100000,0x03eb,&fmmu_config_EL2004,&pd_config_EL2004);
+>      > > >
+>      > > > ///SlaveConfig EL1004
+>      > > > EtherCAT_FMMU_Config fmmu_config_EL1004(1);
+>      > > >
+>      > > > EC_FMMU
+>      > > >
+>      > >
+>      >
+>     fmmu0_EL1004(0x0001000A,0x0001,0x00,0x03,0x1000,0x00,true,false,true);
+>      > > > EtherCAT_PD_Config pd_config_EL1004(1);
+>      > > > EC_SyncMan
+>      > > >
+>      > >
+>      >
+>     syncman0_EL1004(0x1000,1,EC_BUFFERED,EC_READ_FROM_MASTER,false,true,false,false,false,false,EC_FIRST_BUFFER,true);
+>      > > >
+>      > > > EtherCAT_SlaveConfig
+>      > > >
+>      > >
+>      >
+>     EC_EL1004(0x03EC3052,0x00100000,0x03ec,&fmmu_config_EL1004,&pd_config_EL1004);
+>      > > >
+>      > > > ///SlaveConfig EL6751
+>      > > >
+>      > > > EtherCAT_FMMU_Config fmmu_config_EL6751(3);
+>      > > >
+>      > > > EC_FMMU
+>      > > >
+>      > >
+>      >
+>     fmmu0_EL6751(0x00011000,0x0010,0x00,0x07,0x1000,0x00,false,true,true);
+>      > > > EC_FMMU
+>      > > >
+>      > >
+>      >
+>     fmmu1_EL6751(0x00011800,0x0008,0x00,0x07,0x1400,0x00,true,false,true);
+>      > > > EC_FMMU
+>      > > >
+>      > >
+>      >
+>     fmmu2_EL6751(0x00080000,0x0001,0x00,0x01,0x080D,0x00,true,false,true);
+>      > > >
+>      > > > EC_SyncMan
+>      > > >
+>      > >
+>      >
+>     syncman_mbx0_EL6751(0x1800,558,EC_QUEUED,EC_WRITTEN_FROM_MASTER,true,false,false,false,false,false,EC_FIRST_BUFFER,true);
+>      > > > EC_SyncMan
+>      > > >
+>      > >
+>      >
+>     syncman_mbx1_EL6751(0x1A2E,558,EC_QUEUED,EC_READ_FROM_MASTER,true,false,false,false,false,false,EC_FIRST_BUFFER,true);
+>      > > >
+>      > > > EtherCAT_PD_Config pd_config_EL6751(2);///argument=length
+>      > > >
+>      > > > EC_SyncMan
+>      > > >
+>      > >
+>      >
+>     syncman0_EL6751(0x1000,16,EC_BUFFERED,EC_WRITTEN_FROM_MASTER,true,false,false,false,false,false,EC_FIRST_BUFFER,true);
+>      > > > EC_SyncMan
+>      > > >
+>      > >
+>      >
+>     syncman1_EL6751(0x1400,8,EC_BUFFERED,EC_READ_FROM_MASTER,true,false,false,false,false,false,EC_FIRST_BUFFER,true);
+>      > > >
+>      > > >
+>      > > > EtherCAT_SlaveConfig
+>      > > >
+>      > >
+>      >
+>     EC_EL6751(0x1A5F3052,0x00000001,0x03ed,&fmmu_config_EL6751,&pd_config_EL6751,&mbx_conf_EL6751);
+>      > > >
+>      > > > EtherCAT_MbxConfig mbx_conf_EL6751 = {syncman_mbx0_EL6751,
+>      > > > syncman_mbx1_EL6751};
+>      > > >
+>      > > >
+>      > > > static void init_slave_db() {
+>      > > >
+>      > > >
+>      > > >
+>      > > > EtherCAT_SlaveDb * slave_db = EtherCAT_SlaveDb::instance(4);
+>      > > > ///argument=#slaves
+>      > > >
+>      > > >
+>      > > > ///Connect actual fmmu and process data config to respective
+>      > > handlesfor
+>      > > > for EL 4102 (AO)
+>      > > >
+>      > > > fmmu_config_EL4102[0] = fmmu0_EL4102;
+>      > > > fmmu_config_EL4102[1] = fmmu1_EL4102;
+>      > > > pd_config_EL4102[0] = syncman0_EL4102;
+>      > > > pd_config_EL4102[1] = syncman1_EL4102;
+>      > > >
+>      > > > ///Connect actual fmmu and process data config to respective
+>      > > handles for
+>      > > > EL 2004 (DO)
+>      > > >
+>      > > > fmmu_config_EL2004[0] = fmmu0_EL2004;///
+>      > > > pd_config_EL2004[0] = syncman0_EL2004;///
+>      > > >
+>      > > > ///Connect actual fmmu and process data config to respective
+>      > > handles for
+>      > > > EL 1004 (DI)
+>      > > >
+>      > > > fmmu_config_EL1004[0] = fmmu0_EL1004;///
+>      > > > pd_config_EL1004[0] = syncman0_EL1004;///
+>      > > >
+>      > > > ///Connect actual fmmu and process data config to respective
+>      > > > handles for EL 6751 (CoE)
+>      > > >
+>      > > > fmmu_config_EL6751[0] = fmmu0_EL6751;///
+>      > > > fmmu_config_EL6751[1] = fmmu1_EL6751;///
+>      > > > fmmu_config_EL6751[2] = fmmu2_EL6751;///
+>      > > >
+>      > > > pd_config_EL6751[0] = syncman0_EL6751;///
+>      > > > pd_config_EL6751[1] = syncman1_EL6751;///
+>      > > >
+>      > > > ///Commit the slave config objects to the slave database
+>      > > >
+>      > > > slave_db->set_conf(&EC_EK1100,0);
+>      > > > slave_db->set_conf(&EC_EL4102,1);
+>      > > > //slave_db->set_conf(&EC_EK1100,1);
+>      > > >
+>      > > > ///Commit the slave config objects to the slave database
+>      > > >
+>      > > > slave_db->set_conf(&EC_EL2004,2);///
+>      > > >
+>      > > > ///Commit the slave config objects to the slave database
+>      > > >
+>      > > > slave_db->set_conf(&EC_EL1004,3);///
+>      > > >
+>      > > > ///Commit the slave config objects to the slave database
+>      > > >
+>      > > > slave_db->set_conf(&EC_EL6751,4);///
+>      > > > }
+>      > > >
+>      > > >
+>      > > >
+>      > > >
+>      > > > static void* run_master(void * arg) {
+>      > > >
+>      > > > ni = init_ec((char*)arg);
+>      > > > init_slave_db();
+>      > > >
+>      > > > if(ni != 0) {
+>      > > >
+>      > > > printf("Attach netif \n\n");
+>      > > > EtherCAT_DataLinkLayer::instance()->attach(ni);
+>      > > > printf("Master initializing \n\n");
+>      > > > EtherCAT_Master * EM = EtherCAT_Master::instance();
+>      > > > printf("Getting slave handler\n");
+>      > > > EtherCAT_SlaveHandler * sh_ek1100 =
+>     EM->get_slave_handler(0x03e9);
+>      > > > //sleep(1);
+>      > > > printf("Setting EK1100 to OP STATE\n");
+>      > > > if(sh_ek1100->to_state(EC_OP_STATE))
+>      > > > printf("EK1100 succesfully set in OP STATE\n");
+>      > > > else
+>      > > > printf("\nfailed to set EK1100 in OP STATE\n");
+>      > > >
+>      > > > printf("Getting slave handler\n");
+>      > > > EtherCAT_SlaveHandler * sh_el4102 =
+>     EM->get_slave_handler(0x03ea);
+>      > > > printf("Setting EL4102 to OP STATE\n");
+>      > > > if(sh_el4102->to_state(EC_OP_STATE))
+>      > > > printf("EL4102 succesfully set in OP STATE\n");
+>      > > > else
+>      > > > printf("\nfailed to set EL4102 in OP STATE!!\n");
+>      > > >
+>      > > > ///Modif
+>      > > > printf("Getting slave handler\n");
+>      > > > EtherCAT_SlaveHandler * sh_el2004 =
+>      > > > EM->get_slave_handler(0x03eb);
+>      > > > printf("Setting EL2004 to OP STATE\n");
+>      > > > if(sh_el2004->to_state(EC_OP_STATE))
+>      > > > printf("EL2004 succesfully set in OP STATE\n");
+>      > > > else
+>      > > > printf("\nFailed to set EL2004 in OP STATE\n");
+>      > > >
+>      > > > printf("Getting slave handler\n");
+>      > > > EtherCAT_SlaveHandler * sh_el1004 =
+>      > > > EM->get_slave_handler(0x03ec);
+>      > > > printf("Setting EL1004 to OP STATE\n");
+>      > > > if(sh_el1004->to_state(EC_OP_STATE))
+>      > > > printf("EL1004 succesfully set in OP STATE\n");
+>      > > > else
+>      > > > printf("\nFailed to set EL1004 in OP STATE\n");
+>      > > >
+>      > > > printf("Getting slave handler\n");
+>      > > > EtherCAT_SlaveHandler * sh_el6751 =
+>      > > > EM->get_slave_handler(0x03ed);
+>      > > > printf("Setting EL6751 to OP STATE\n");
+>      > > > if(sh_el6751->to_state(EC_OP_STATE))
+>      > > > printf("EL6751 succesfully set in OP STATE\n");
+>      > > > else
+>      > > > printf("\nFailed to set EL6751 in OP STATE\n");
+>      > > >
+>      > > >
+>      > > >
+>      > > > Please, If you have some ideas about this error let me know.
+>      > > (Logical
+>      > > > Address...)
+>      > > >
+>      > > > Best regards,
+>      > > >
+>      > > > Said HARTI
+>      > > >
+>      > > >
+>      > >
+>      >
+>     ------------------------------------------------------------------------
+>      > > > Ne gardez plus qu'une seule adresse mail ! Copiez vos mails
+>      > > > vers Yahoo! Mail
+>      > > >
+>      > > >
+>      > > >
+>      > >
+>      >
+>     ------------------------------------------------------------------------
+>      > > >
+>      > > > _______________________________________________
+>      > > > Ethercatmaster-users mailing list
+>      > > > Ethercatmaster-users at lists.berlios.de
+>      > > > https://lists.berlios.de/mailman/listinfo/ethercatmaster-users
+>      > >
+>      > >
+>      > >
+>      >
+>     ------------------------------------------------------------------------
+>      > > Stockage illimit? de vos mails avec Yahoo! Mail. Changez
+>      > aujourd'hui de
+>      > > mail !
+>      >
+>      >
+>      >
+>     ------------------------------------------------------------------------
+>      > Stockage illimit? de vos mails avec Yahoo! Mail. Changez
+>     aujourd'hui de
+>      > mail !
+> 
+> 
+> ------------------------------------------------------------------------
+> Stockage illimit? de vos mails avec Yahoo! Mail. Changez aujourd'hui de 
+> mail ! <http://fr.promotions.yahoo.com/mail/nouveau_yahoomail2.html>
+
+
+From klaas.gadeyne at fmtc.be  Tue Jul 31 11:45:37 2007
+From: klaas.gadeyne at fmtc.be (Klaas Gadeyne)
+Date: Tue, 31 Jul 2007 11:45:37 +0200 (CEST)
+Subject: [Ethercatmaster-devel] [ECOS] Project ideas for graduate course
+	(fwd)
+Message-ID: <Pine.LNX.4.64.0707311143340.13618@ampere.labo01.fmtc.be>
+
+[Note to self, please archive :)]
+
+Follow up. This might be very useful in order to implement the
+EtherCAT driver for eCos using a similar mechanism as is currently
+done with the Xenomai/RTnet port (which might make the code more
+comprehensible).
+
+Klaas
+
+---------- Forwarded message ----------
+Date: Tue, 31 Jul 2007 11:35:08 +0200
+From: Andrew Lunn <andrew at lunn.ch>
+To: Rohit <will.u.tellmemore at gmail.com>
+Cc: ecos-discuss at ecos.sourceware.org
+Subject: Re: [ECOS] Project ideas for graduate course
+
+On Tue, Jul 31, 2007 at 01:04:43PM +0530, Rohit wrote:
+> Thanks a lot  for your suggestion. I would go through what you have
+> suggested and let you guys know what i select out of these(or
+> something different). More suggestions are still welcome though.
+
+
+How much effort do you think you can give to the project?
+
+RPC and NFS will be a lot of work, i guess too much work.
+A syslog client seems a lot more reasonable.
+
+Another idea would be to look at adding raw sockets to the TCP/IP
+stack and then maybe BPF/libpcap. Using RAW sockets is something that
+comes up every so often. The code was taken out of the stack when it
+was ported to eCos. I don't think it will be too hard to put it back
+in again and write some test programs, etc.
+
+    Andrew
+
+-- 
+Before posting, please read the FAQ: http://ecos.sourceware.org/fom/ecos
+and search the list archive: http://ecos.sourceware.org/ml/ecos-discuss
+
+
+

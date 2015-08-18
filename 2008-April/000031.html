@@ -1,0 +1,111 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+ <HEAD>
+   <TITLE> [Ethercatmaster-devel] Critical fix for posix/Linux based master
+   </TITLE>
+   <LINK REL="Index" HREF="http://lists.berlios.de/pipermail/ethercatmaster-devel/2008-April/index.html" >
+   <LINK REL="made" HREF="mailto:ethercatmaster-devel%40lists.berlios.de?Subject=Re%3A%20%5BEthercatmaster-devel%5D%20Critical%20fix%20for%20posix/Linux%20based%20master&In-Reply-To=%3CPine.LNX.4.64.0804251625420.9100%40ampere.labo01.fmtc.be%3E">
+   <META NAME="robots" CONTENT="index,nofollow">
+   <style type="text/css">
+       pre {
+           white-space: pre-wrap;       /* css-2.1, curent FF, Opera, Safari */
+           }
+   </style>
+   <META http-equiv="Content-Type" content="text/html; charset=us-ascii">
+   <LINK REL="Previous"  HREF="000030.html">
+   <LINK REL="Next"  HREF="000032.html">
+ </HEAD>
+ <BODY BGCOLOR="#ffffff">
+   <H1>[Ethercatmaster-devel] Critical fix for posix/Linux based master</H1>
+    <B>Klaas Gadeyne</B> 
+    <A HREF="mailto:ethercatmaster-devel%40lists.berlios.de?Subject=Re%3A%20%5BEthercatmaster-devel%5D%20Critical%20fix%20for%20posix/Linux%20based%20master&In-Reply-To=%3CPine.LNX.4.64.0804251625420.9100%40ampere.labo01.fmtc.be%3E"
+       TITLE="[Ethercatmaster-devel] Critical fix for posix/Linux based master">klaas.gadeyne at fmtc.be
+       </A><BR>
+    <I>Fri Apr 25 16:43:09 CEST 2008</I>
+    <P><UL>
+        <LI>Previous message: <A HREF="000030.html">[Ethercatmaster-devel] Critical fix for posix/Linux based master
+</A></li>
+        <LI>Next message: <A HREF="000032.html">[Ethercatmaster-devel] [Bug 1] New: EML needs bugtracking system
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#31">[ date ]</a>
+              <a href="thread.html#31">[ thread ]</a>
+              <a href="subject.html#31">[ subject ]</a>
+              <a href="author.html#31">[ author ]</a>
+         </LI>
+       </UL>
+    <HR>  
+<!--beginarticle-->
+<PRE>On Thu, 24 Apr 2008, Peter Soetens wrote:
+&gt;<i> Hi,
+</I>&gt;<i>
+</I>&gt;<i> 1 out of 100.000 Ethernet packets is lost during transmission due to
+</I>&gt;<i> electromagnetic interference. This requires each driver implementation to
+</I>&gt;<i> anticipate upon packet loss and retry sending if a packet does not return.
+</I>&gt;<i> The current 'Linux' (src/arch/posix/ethercat_posix_drv.c) implementation does
+</I>&gt;<i> not do this and waits forever after a while.
+</I>&gt;<i>
+</I>&gt;<i> The patch below was tested and fixed the problem for vanilla Linux (PREEMPT,
+</I>&gt;<i> *not* PREEMPT_RT). We had to set the timeout to 2000us instead of 100us to
+</I>&gt;<i> get the desired timeout behaviour in recv(). Maybe a PREEMPT_RT kernel could
+</I>&gt;<i> do better.
+</I>
+Fixed in r33.  Thanks!
+
+[<A HREF="https://lists.berlios.de/mailman/listinfo/ethercatmaster-devel">kgad at ampere</A> ~/SVN/eml-trunk]$
+  svn commit -m &quot;Fixes no-timeout issue in posix port (luckily you can
+  verify in the SVN log that I only *compile* tested this port :-)).
+  Fix by Peter Soetens&quot;
+Sending        src/arch/posix/ethercat_posix_drv.c
+Transmitting file data .
+Committed revision 33.
+
+&gt;<i> Peter
+</I>&gt;<i>
+</I>&gt;<i> PS: the master-test program crashes when no devices/cables are connected. due
+</I>&gt;<i> to line 64 using an unchecked pointer.
+</I>
+Not only on that line...  However, I would first like to merge the
+code of the different tests programs into one file, instead of fixing
+this in each test program (see bugzilla note below).
+
+&gt;<i> PPS: setting MAX_TRIES_TX to 10 is not robust for someone unplugging the cable
+</I>&gt;<i> and then plugging it back in... Why is there a limit ?
+</I>
+Tom added this in r28, see 
+&lt;<A HREF="https://svn.berlios.de/wsvn/ethercatmaster/trunk/src/arch/RTnet/ethercat_xenomai_drv.c?op=diff&amp;rev=28&amp;sc=1">https://svn.berlios.de/wsvn/ethercatmaster/trunk/src/arch/RTnet/ethercat_xenomai_drv.c?op=diff&amp;rev=28&amp;sc=1</A>&gt;
+
+I *think* the rationale to setting a limit is/was that, in case something
+*really* fishy happens, this should be handled at a _higher_ level in
+the stack, instead of just keep trying at the low level.
+
+While looking at how this was implemented in the eCos port, I noticed
+I didn't (take the time to) integrate the eCos code into the build
+system too.  Looks like a bugzilla might be useful anyway?
+
+regards,
+
+Klaas
+
+</PRE>
+
+<!--endarticle-->
+    <HR>
+    <P><UL>
+        <!--threads-->
+	<LI>Previous message: <A HREF="000030.html">[Ethercatmaster-devel] Critical fix for posix/Linux based master
+</A></li>
+	<LI>Next message: <A HREF="000032.html">[Ethercatmaster-devel] [Bug 1] New: EML needs bugtracking system
+</A></li>
+         <LI> <B>Messages sorted by:</B> 
+              <a href="date.html#31">[ date ]</a>
+              <a href="thread.html#31">[ thread ]</a>
+              <a href="subject.html#31">[ subject ]</a>
+              <a href="author.html#31">[ author ]</a>
+         </LI>
+       </UL>
+
+<hr>
+<a href="https://lists.berlios.de/mailman/listinfo/ethercatmaster-devel">More information about the Ethercatmaster-devel
+mailing list</a><br>
+</body></html>

@@ -1,0 +1,269 @@
+From klaas.gadeyne at fmtc.be  Mon Apr  7 13:47:33 2008
+From: klaas.gadeyne at fmtc.be (Klaas Gadeyne)
+Date: Mon, 7 Apr 2008 13:47:33 +0200 (CEST)
+Subject: [Ethercatmaster-devel] Linux port
+Message-ID: <Pine.LNX.4.64.0804071338260.25044@ampere.labo01.fmtc.be>
+
+Hi,
+
+In r32, I just committed a plain gnu/linux "port" of EML.  Well,
+"port" is maybe a big word, since the code only slightly differs from
+the RTnet/xenomai port.
+This port was kindly contributed by Rene van der Molengraft.  They are
+using (and have tested, I presume :-) it on top of a PREEMPT_RT kernel.
+
+Some remarks:
+- Me/myself and I only revamped and compile tested Rene's code.
+- Ideally, I think we should end up with a single "posix" port with
+   some ifdef-ed NP extensions.  However, this is not an ideal word.
+   Feel free to improve it :-)
+- I've added a comment in the rtnet port, since I think the "posix"
+   header prefix shouldn't be necessary if the xenomai posix wrapper code
+   is adequately defined in the top level CMakelists file.
+
+  svn diff -r31 tests/rtnet/master_test.cpp
+Index: tests/rtnet/master_test.cpp
+===================================================================
+--- tests/rtnet/master_test.cpp (revision 31)
++++ tests/rtnet/master_test.cpp (working copy)
+@@ -1,3 +1,4 @@
++// FIXME KGAD: Shouldn't this be solved by using the xenomai wrappers?
+  #include <posix/pthread.h>
+  #include <signal.h>
+  #include <sys/mman.h>
+
+regards,
+
+Klaas
+
+ps.  Other contributions (e.g. I recall somebody telling me about a MS
+      windows port he had done, which might be useful for
+      testing/understanding the code) are still welcome.
+
+
+From peter.soetens at fmtc.be  Thu Apr 24 12:25:47 2008
+From: peter.soetens at fmtc.be (Peter Soetens)
+Date: Thu, 24 Apr 2008 12:25:47 +0200
+Subject: [Ethercatmaster-devel] Critical fix for posix/Linux based master
+Message-ID: <200804241225.47405.peter.soetens@fmtc.be>
+
+Hi,
+
+1 out of 100.000 Ethernet packets is lost during transmission due to 
+electromagnetic interference. This requires each driver implementation to 
+anticipate upon packet loss and retry sending if a packet does not return.
+The current 'Linux' (src/arch/posix/ethercat_posix_drv.c) implementation does 
+not do this and waits forever after a while.
+
+The patch below was tested and fixed the problem for vanilla Linux (PREEMPT, 
+*not* PREEMPT_RT). We had to set the timeout to 2000us instead of 100us to 
+get the desired timeout behaviour in recv(). Maybe a PREEMPT_RT kernel could 
+do better.
+
+Peter
+
+PS: the master-test program crashes when no devices/cables are connected. due 
+to line 64 using an unchecked pointer.
+PPS: setting MAX_TRIES_TX to 10 is not robust for someone unplugging the cable 
+and then plugging it back in... Why is there a limit ?
+-- 
+Peter Soetens -- FMTC -- <http://www.fmtc.be>
+-------------- next part --------------
+A non-text attachment was scrubbed...
+Name: critical-packet-round-trip-timeout-fix-posix.patch
+Type: text/x-diff
+Size: 1634 bytes
+Desc: not available
+URL: <https://lists.berlios.de/pipermail/ethercatmaster-devel/attachments/20080424/e25c2f9d/attachment.patch>
+
+From klaas.gadeyne at fmtc.be  Fri Apr 25 16:43:09 2008
+From: klaas.gadeyne at fmtc.be (Klaas Gadeyne)
+Date: Fri, 25 Apr 2008 16:43:09 +0200 (CEST)
+Subject: [Ethercatmaster-devel] Critical fix for posix/Linux based master
+In-Reply-To: <200804241225.47405.peter.soetens@fmtc.be>
+References: <200804241225.47405.peter.soetens@fmtc.be>
+Message-ID: <Pine.LNX.4.64.0804251625420.9100@ampere.labo01.fmtc.be>
+
+On Thu, 24 Apr 2008, Peter Soetens wrote:
+> Hi,
+>
+> 1 out of 100.000 Ethernet packets is lost during transmission due to
+> electromagnetic interference. This requires each driver implementation to
+> anticipate upon packet loss and retry sending if a packet does not return.
+> The current 'Linux' (src/arch/posix/ethercat_posix_drv.c) implementation does
+> not do this and waits forever after a while.
+>
+> The patch below was tested and fixed the problem for vanilla Linux (PREEMPT,
+> *not* PREEMPT_RT). We had to set the timeout to 2000us instead of 100us to
+> get the desired timeout behaviour in recv(). Maybe a PREEMPT_RT kernel could
+> do better.
+
+Fixed in r33.  Thanks!
+
+[kgad at ampere ~/SVN/eml-trunk]$
+  svn commit -m "Fixes no-timeout issue in posix port (luckily you can
+  verify in the SVN log that I only *compile* tested this port :-)).
+  Fix by Peter Soetens"
+Sending        src/arch/posix/ethercat_posix_drv.c
+Transmitting file data .
+Committed revision 33.
+
+> Peter
+>
+> PS: the master-test program crashes when no devices/cables are connected. due
+> to line 64 using an unchecked pointer.
+
+Not only on that line...  However, I would first like to merge the
+code of the different tests programs into one file, instead of fixing
+this in each test program (see bugzilla note below).
+
+> PPS: setting MAX_TRIES_TX to 10 is not robust for someone unplugging the cable
+> and then plugging it back in... Why is there a limit ?
+
+Tom added this in r28, see 
+<https://svn.berlios.de/wsvn/ethercatmaster/trunk/src/arch/RTnet/ethercat_xenomai_drv.c?op=diff&rev=28&sc=1>
+
+I *think* the rationale to setting a limit is/was that, in case something
+*really* fishy happens, this should be handled at a _higher_ level in
+the stack, instead of just keep trying at the low level.
+
+While looking at how this was implemented in the eCos port, I noticed
+I didn't (take the time to) integrate the eCos code into the build
+system too.  Looks like a bugzilla might be useful anyway?
+
+regards,
+
+Klaas
+
+
+From klaas.gadeyne at fmtc.be  Tue Apr 29 13:41:39 2008
+From: klaas.gadeyne at fmtc.be (Klaas Gadeyne)
+Date: Tue, 29 Apr 2008 13:41:39 +0200
+Subject: [Ethercatmaster-devel] [Bug 1] New: EML needs bugtracking system
+Message-ID: <bug-1-3@https.www.fmtc.be/bugzilla/eml/>
+
+For more infomation about this bug, visit <https://www.fmtc.be/bugzilla/eml/show_bug.cgi?id=1>
+           Summary: EML needs bugtracking system
+           Product: EML
+           Version: unspecified
+          Platform: PC
+        OS/Version: All
+            Status: ASSIGNED
+          Severity: enhancement
+          Priority: P5
+         Component: Other
+        AssignedTo: ethercatmaster-devel at lists.berlios.de
+        ReportedBy: klaas.gadeyne at fmtc.be
+   Estimated Hours: 0.0
+
+- To serve as our personal todo/must fix list (Yes, we're getting older too)
+- To be able to review/accept/manage contributions
+- to test this bugzilla install :-)
+
+As for our orocos bugzilla, I suggest the output of this installation is
+redirected to the developers ML.
+
+-- 
+Configure bugmail: https://www.fmtc.be/bugzilla/eml/userprefs.cgi?tab=email
+------- You are receiving this mail because: -------
+You are the assignee for the bug.
+
+
+From klaas.gadeyne at fmtc.be  Tue Apr 29 14:02:15 2008
+From: klaas.gadeyne at fmtc.be (Klaas Gadeyne)
+Date: Tue, 29 Apr 2008 14:02:15 +0200
+Subject: [Ethercatmaster-devel] [Bug 1] EML needs bugtracking system
+In-Reply-To: <bug-1-3@https.www.fmtc.be/bugzilla/eml/>
+Message-ID: <E1JqoXH-0005vH-0Y@www.fmtc.be>
+
+For more infomation about this bug, visit <https://www.fmtc.be/bugzilla/eml/show_bug.cgi?id=1>
+
+Klaas Gadeyne <klaas.gadeyne at fmtc.be> changed:
+
+           What    |Removed                     |Added
+ --------------------------------------------------------------------------
+         Resolution|                            |FIXED
+             Status|ASSIGNED                    |RESOLVED
+
+
+
+--- Comment #1 from Klaas Gadeyne <klaas.gadeyne at fmtc.be>  2008-04-29 14:02:15 ---
+(In reply to comment #0)
+> - To serve as our personal todo/must fix list (Yes, we're getting older too)
+> - To be able to review/accept/manage contributions
+> - to test this bugzilla install :-)
+> 
+> As for our orocos bugzilla, I suggest the output of this installation is
+> redirected to the developers ML.
+
+- Bugzilla installation seems to work (attachments not yet tested)
+- Removed bug tracker from berlios pages.
+- Added link to EML homepage
+
+-- 
+Configure bugmail: https://www.fmtc.be/bugzilla/eml/userprefs.cgi?tab=email
+------- You are receiving this mail because: -------
+You are the assignee for the bug.
+
+
+From klaas.gadeyne at fmtc.be  Tue Apr 29 15:00:15 2008
+From: klaas.gadeyne at fmtc.be (Klaas Gadeyne)
+Date: Tue, 29 Apr 2008 15:00:15 +0200
+Subject: [Ethercatmaster-devel] [Bug 2] New: eCos port not yet in SVN
+	repository
+Message-ID: <bug-2-3@https.www.fmtc.be/bugzilla/eml/>
+
+For more infomation about this bug, visit <https://www.fmtc.be/bugzilla/eml/show_bug.cgi?id=2>
+           Summary: eCos port not yet in SVN repository
+           Product: EML
+           Version: trunk
+          Platform: All
+        OS/Version: eCos
+            Status: NEW
+          Severity: normal
+          Priority: P5
+         Component: RTOS wrapper
+        AssignedTo: ethercatmaster-devel at lists.berlios.de
+        ReportedBy: klaas.gadeyne at fmtc.be
+   Estimated Hours: 0.0
+
+EML 0.1 already had nice RTOS wrapper code, but was using the eCos build
+system.  The Xenomai/RTnet port also brought a switch to cmake, but the
+arch/eCos code has not yet been imported in the SVN repository.
+
+-- 
+Configure bugmail: https://www.fmtc.be/bugzilla/eml/userprefs.cgi?tab=email
+------- You are receiving this mail because: -------
+You are the assignee for the bug.
+
+
+From klaas.gadeyne at fmtc.be  Tue Apr 29 15:02:50 2008
+From: klaas.gadeyne at fmtc.be (Klaas Gadeyne)
+Date: Tue, 29 Apr 2008 15:02:50 +0200
+Subject: [Ethercatmaster-devel] [Bug 3] New: CanOpen over EtherCAT
+Message-ID: <bug-3-3@https.www.fmtc.be/bugzilla/eml/>
+
+For more infomation about this bug, visit <https://www.fmtc.be/bugzilla/eml/show_bug.cgi?id=3>
+           Summary: CanOpen over EtherCAT
+           Product: EML
+           Version: trunk
+          Platform: All
+        OS/Version: All
+            Status: NEW
+          Severity: enhancement
+          Priority: P5
+         Component: AL
+        AssignedTo: ethercatmaster-devel at lists.berlios.de
+        ReportedBy: klaas.gadeyne at fmtc.be
+   Estimated Hours: 0.0
+
+The ethercat standard allows several protocols on top of ethercat.  Taking into
+account popular demand, it seems EML would benefit most from CanOpen over
+EtherCAT.
+
+-- 
+Configure bugmail: https://www.fmtc.be/bugzilla/eml/userprefs.cgi?tab=email
+------- You are receiving this mail because: -------
+You are the assignee for the bug.
+
+

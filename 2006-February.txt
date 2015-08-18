@@ -1,0 +1,11 @@
+From klaas.gadeyne at fmtc.be  Mon Feb 27 17:05:06 2006
+From: klaas.gadeyne at fmtc.be (Klaas Gadeyne)
+Date: Mon, 27 Feb 2006 17:05:06 +0100 (CET)
+Subject: [Ethercatmaster-devel] Welcome to ethercatmaster-devel
+Message-ID: <Pine.LNX.4.63.0602271703400.32332@nyquist.labo01.fmtc.be>
+
+Mail to initialise ML archives and check if everything goes fine when posting.
+
+Klaas
+
+
